@@ -23,7 +23,12 @@ This task is done automatically on server init (next step).
 Type `knex migrate:latest` (install knex via `npm install knex -g`)
 
 ### How to run
+#### Production mode
 Type `pm2 start server.js` (install pm2 via `npm install pm2 -g`)
+
+#### Dev mode
+Type `node server.js`
+
 
 ## TODO
 - [ ] ES6 support
