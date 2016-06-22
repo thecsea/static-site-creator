@@ -1,5 +1,9 @@
 # Static site creator
 
+## Features
+- [ ] Export to javascript object for balde template
+- [ ] Multiple git repositories support
+
 ## How to use
 
 ### How to Install
