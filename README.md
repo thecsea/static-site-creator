@@ -1,6 +1,6 @@
 # Static site creator
 
-Creator of static sites for tempalte managers (like pug ex-blade)
+Creator of static sites for template managers (like pug ex-blade)
 
 ## Features
 - [ ] Export to javascript object for balde template
