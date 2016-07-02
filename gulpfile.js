@@ -48,8 +48,8 @@ gulp.task('vendor', function() {
 
 gulp.task('watch', function() {
   gulp.watch('public/css/**/*.scss', ['sass']);
-  gulp.watch('app/views/**/*.html', gulp.series('templates'));
-  gulp.watch('app/**/*.js', gulp.series('angular'));
+  gulp.watch('app/views/**/*.html', ['templates']);
+  gulp.watch('app/**/*.js',  ['angular']);
 });
 
 gulp.task('build', ['sass', 'angular', 'vendor', 'templates']);
