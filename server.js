@@ -62,6 +62,8 @@ app.post('/login', userController.loginPost);
 app.post('/forgot', userController.forgotPost);
 app.post('/reset/:token', userController.resetPost);
 app.get('/unlink/:provider', userController.ensureAuthenticated, userController.unlink);
+app.post('/auth/google', userController.authGoogle);
+app.get('/auth/google/callback', userController.authGoogleCallback);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));
