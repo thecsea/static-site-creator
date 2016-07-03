@@ -1,16 +1,14 @@
 var dotenv = require('dotenv');
+var pg = require('pg');
 
 dotenv.load();
 
-if(process.env.POSTGRESQL){
+
+pg.defaults.ssl = true;
+if(process.env.DATABASE_URL){
   module.exports = {
-    client: 'postgresql',
-    connection: {
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME
-    }
+    client: 'pg',
+    connection: process.env.DATABASE_URL+'?ssl=true'
   };
 }else {
   module.exports = {
