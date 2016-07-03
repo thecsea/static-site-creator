@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var bcrypt = require('bcrypt-nodejs');
 var bookshelf = require('../config/bookshelf');
+var SshKey = require('./SshKey');
 
 var User = bookshelf.Model.extend({
   tableName: 'users',
@@ -8,6 +9,20 @@ var User = bookshelf.Model.extend({
 
   initialize: function() {
     this.on('saving', this.hashPassword, this);
+    var _this = this;
+    this.on('created', function(model, attrs, options) {
+        _this.sshKeys().create({name: 'default'})//.save(new SshKey())
+          .then(function(user) {
+          })
+          .catch(function(err) {
+            console.error(err);
+              //return res.status(400).send({ msg: 'Problems occurred during generation of the keys' }); //TODO return error
+          });
+    });
+  },
+
+  sshKeys() {
+    return this.hasMany(SshKey);
   },
 
   hashPassword: function(model, attrs, options) {

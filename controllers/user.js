@@ -44,7 +44,7 @@ exports.ensureAuthenticated = function(req, res, next) {
     }
 
     new User({ email: req.body.email })
-      .fetch()
+      .fetch({withRelated: ['sshKeys']})
       .then(function(user) {
         if (!user) {
           return res.status(401).send({ msg: 'The email address ' + req.body.email + ' is not associated with any account. ' +
@@ -55,7 +55,7 @@ exports.ensureAuthenticated = function(req, res, next) {
           if (!isMatch) {
             return res.status(401).send({ msg: 'Invalid email or password' });
           }
-          res.send({ token: generateToken(user), user: user.toJSON() });
+          res.send({ token: generateToken(user), user: user.toJSON(), sshKeys: user.related('sshKeys').toJSON() });
         });
       });
   };

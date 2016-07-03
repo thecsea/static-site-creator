@@ -48,6 +48,8 @@ Type `node server.js`
 - [ ] Set automatically secret into `.env`, perform this task with installation (perform also .env copy if it doesn't exist)
 - [ ] Google auth key
 - [ ] Privacy policy
+- [ ] Password confirmation
+- [ ] XSS and CSRF protections
 
 ## Configuration
 - **Platform:** node
