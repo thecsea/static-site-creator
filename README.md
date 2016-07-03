@@ -46,6 +46,8 @@ Type `node server.js`
 - [ ] Browserify
 - [ ] Fix npm scripts and use them to run the app
 - [ ] Set automatically secret into `.env`, perform this task with installation (perform also .env copy if it doesn't exist)
+- [ ] Google auth key
+- [ ] Privacy policy
 
 ## Configuration
 - **Platform:** node
