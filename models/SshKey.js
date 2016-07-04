@@ -1,4 +1,5 @@
 var bookshelf = require('../config/bookshelf');
+bookshelf.plugin('registry');
 var User = require('./User');
 
 var keygen = require('ssh-keygen');
@@ -28,30 +29,30 @@ var SshKey = bookshelf.Model.extend({
 
   generateKey(){
     var location = '../tmp/'+md5(Math.random());
-    var comment = 'joe@foobar.com'; //TODO get username
     var password = false; // false and undefined will convert to an empty pw
-
+    var _this = this;
     var promise = new Promise(function(resolve, reject) {
-    keygen({
-      location: location,
-      comment: comment,
-      password: password,
-      read: true,
-      destroy: true //TODO destory all keys
-    }, function(err, out){
-      if(err) return reject(err); //console.log('Something went wrong: '+err);
-      resolve({public: out.pubKey, private: out.key});
-      //console.log('Keys created!');
-      //console.log('private key: '+out.key);
-      //console.log('public key: '+out.pubKey);
-    })});
+      _this.related('user').fetch().then(User => {
+        var comment = User.get('name') + '@static-site.thecsea.it'; //TODO insert custom domain from env
+        keygen({
+          location: location,
+          comment: comment,
+          password: password,
+          read: true,
+          destroy: true //TODO destory all keys
+        }, function(err, out){
+          if(err) return reject(err);
+          resolve({public: out.pubKey, private: out.key});
+        });
+      });
+    });
+
     return promise;
-    //return {public: 'aaa', private: 'bbb'};
   },
 
   user() {
-    return this.belongsTo(User);
+    return this.belongsTo('User', 'user_id');
   }
 });
 
-module.exports = SshKey;
+module.exports = bookshelf.model('SshKey',SshKey);;

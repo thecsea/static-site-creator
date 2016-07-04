@@ -1,7 +1,9 @@
 var crypto = require('crypto');
 var bcrypt = require('bcrypt-nodejs');
 var bookshelf = require('../config/bookshelf');
+bookshelf.plugin('registry');
 var SshKey = require('./SshKey');
+
 
 var User = bookshelf.Model.extend({
   tableName: 'users',
@@ -22,7 +24,7 @@ var User = bookshelf.Model.extend({
   },
 
   sshKeys() {
-    return this.hasMany(SshKey);
+    return this.hasMany('SshKey');
   },
 
   hashPassword: function(model, attrs, options) {
@@ -61,4 +63,4 @@ var User = bookshelf.Model.extend({
   }
 });
 
-module.exports = User;
+module.exports = bookshelf.model('User', User);
