@@ -2,6 +2,8 @@
 
 Creator of static sites for template managers (like pug ex-blade)
 
+[Example site](http://static-site.thecsea.it/) we are not responsable for any issues, also issues realted to privacy and security of the storage
+
 ## Features
 - [ ] Export to javascript object for pug (ex balde) template
 - [ ] Multiple git repositories support
