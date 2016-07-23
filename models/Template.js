@@ -1,6 +1,7 @@
 var bookshelf = require('../config/bookshelf');
 bookshelf.plugin('registry');
 var User = require('./User');
+var WebsiteSection = require('./WebsiteSection');
 
 
 var Template = bookshelf.Model.extend({
@@ -11,6 +12,10 @@ var Template = bookshelf.Model.extend({
 
   user() {
     return this.belongsTo('User', 'user_id');
+  },
+
+  sections() {
+    return this.hasMany('WebsiteSection');
   },
 
   virtuals: {

@@ -8,6 +8,7 @@ exports.seed = function(knex, Promise) {
       knex('ssh_keys').del(),
       knex('websites').del(),
       knex('templates').del(),
+      knex('website_sections').del(),
 
       //user
       new Promise(function(resolve, reject) {
@@ -29,6 +30,12 @@ exports.seed = function(knex, Promise) {
 
       //templates
       knex('templates').insert({id: 1, user_id:1, name: 'test_template', structure:JSON.stringify({test:'aa', test2:'bbb'})}),
-      knex('templates').insert({id: 2, user_id:1, name: 'test_template2', structure:JSON.stringify({test:'aa2', test2:'bbb2'})})
+      knex('templates').insert({id: 2, user_id:1, name: 'test_template2', structure:JSON.stringify({test:'aa2', test2:'bbb2'})}),
+
+      //Website sections
+      knex('website_sections').insert({id: 1, website_id:1, template_id:1, name: 'test_section1', path:'test/test'}),
+      knex('website_sections').insert({id: 2, website_id:1, template_id:2, name: 'test_section2', path:'test/test2'}),
+      knex('website_sections').insert({id: 3, website_id:2, template_id:1, name: 'test_section3', path:'test/test'}),
+      knex('website_sections').insert({id: 4, website_id:2, template_id:2, name: 'test_section4', path:'test/test2'})
   );
 };
