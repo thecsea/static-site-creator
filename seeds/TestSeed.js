@@ -23,6 +23,7 @@ exports.seed = function(knex, Promise) {
       knex('ssh_keys').insert({id: 1, user_id:1, name: 'test_key', private:'privateKEY', public:'PUBLICKEY'}),
 
       //websites
-    knex('websites').insert({id: 1, user_id:1, name: 'test_website', git_url:'git@git', url:'example.com'})
+    knex('websites').insert({id: 1, user_id:1, name: 'test_website', git_url:'git@git', url:'example.com'}),
+    knex('websites').insert({id: 2, user_id:1, name: 'test_website2', git_url:'git@git2', url:'example2.com'})
   );
 };

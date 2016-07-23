@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      <div ng-if="messages.error" role="alert" class="alert alert-danger">
+        <div ng-repeat="error in messages.error">{{error.msg}}</div>
+      </div>
+      <div ng-if="messages.success" role="alert" class="alert alert-success">
+        <div ng-repeat="success in messages.success">{{success.msg}}</div>
+      </div>
+      <form ng-submit="updateWebsites()" class="form-horizontal">
+        <legend>Websites</legend>
+        <div class="form-group" ng-repeat="website in websites">
+          <label ng-attr-for="{{'website'+$index}}" class="col-sm-3">{{website.name}}</label>
+          <div class="col-sm-7">
+            <textarea ng-attr-name="{{'website'+$index}}" ng-attr-id="{{'website'+$index}}" class="form-control" readonly="readonly" ng-model="website.url"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
