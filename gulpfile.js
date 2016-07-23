@@ -48,7 +48,7 @@ gulp.task('vendor', function() {
 
 gulp.task('watch', function() {
   gulp.watch('public/css/**/*.scss', ['sass']);
-  gulp.watch('app/views/**/*.html', ['templates']);
+  gulp.watch('app/partials/**/*.html', ['templates']);
   gulp.watch('app/**/*.js',  ['angular']);
 });
 
