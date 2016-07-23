@@ -19,6 +19,7 @@ var User = require('./models/User');
 // Controllers
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
+var websiteController = require('./controllers/website');
 
 var app = express();
 
@@ -64,6 +65,10 @@ app.post('/reset/:token', userController.resetPost);
 app.get('/unlink/:provider', userController.ensureAuthenticated, userController.unlink);
 app.post('/auth/google', userController.authGoogle);
 app.get('/auth/google/callback', userController.authGoogleCallback);
+app.get('/websites/all', websiteController.ensureAuthenticated, websiteController.websitesGet);
+app.post('/websites', websiteController.ensureAuthenticated, websiteController.websitesPost);
+app.put('/websites', websiteController.ensureAuthenticated, websiteController.websitesPut);
+app.delete('/websites', websiteController.ensureAuthenticated, websiteController.websitesDelete);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));
