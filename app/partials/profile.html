@@ -62,9 +62,9 @@
     <div class="panel-body">
       <legend>SSH keys</legend>
       <div class="form-group" ng-repeat="key in profile.sshKeys">
-        <label for="password" class="col-sm-3">{{key.name}}</label>
+        <label ng-attr-for="{{'sshkey'+$index}}" class="col-sm-3">{{key.name}}</label>
         <div class="col-sm-7">
-          <textarea class="form-control" readonly="readonly" ng-model="key.public"></textarea>
+          <textarea ng-attr-name="{{'sshkey'+$index}}" ng-attr-id="{{'sshkey'+$index}}" class="form-control" readonly="readonly" ng-model="key.public"></textarea>
         </div>
       </div>
     </div>
