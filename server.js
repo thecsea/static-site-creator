@@ -20,6 +20,7 @@ var User = require('./models/User');
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 var websiteController = require('./controllers/website');
+var templateController = require('./controllers/template');
 
 var app = express();
 
@@ -69,6 +70,11 @@ app.get('/websites/all', websiteController.ensureAuthenticated, websiteControlle
 app.post('/websites', websiteController.ensureAuthenticated, websiteController.websitesPost);
 app.put('/websites', websiteController.ensureAuthenticated, websiteController.websitesPut);
 app.delete('/websites', websiteController.ensureAuthenticated, websiteController.websitesDelete);
+app.get('/templates/all', templateController.ensureAuthenticated, templateController.templatesGet);
+app.post('/templates', templateController.ensureAuthenticated, templateController.templatesPost);
+app.put('/templates', templateController.ensureAuthenticated, templateController.templatesPut);
+app.delete('/templates', templateController.ensureAuthenticated, templateController.templatesDelete);
+
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));

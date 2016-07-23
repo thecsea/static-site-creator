@@ -4,6 +4,7 @@ var bookshelf = require('../config/bookshelf');
 bookshelf.plugin('registry');
 var SshKey = require('./SshKey');
 var Website = require('./Website');
+var Template = require('./Template');
 
 
 var User = bookshelf.Model.extend({
@@ -30,6 +31,10 @@ var User = bookshelf.Model.extend({
 
   websites() {
     return this.hasMany('Website');
+  },
+
+  templates() {
+    return this.hasMany('Template');
   },
 
   hashPassword: function(model, attrs, options) {
