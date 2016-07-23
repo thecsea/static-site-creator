@@ -14,7 +14,7 @@ var Template = bookshelf.Model.extend({
   },
 
   virtuals: {
-    structureParsed: {
+    parsedStructure: {
       get () {
         return JSON.parse(this.get('structure'));
       },

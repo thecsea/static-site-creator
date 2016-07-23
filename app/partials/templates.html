@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      <div ng-if="messages.error" role="alert" class="alert alert-danger">
+        <div ng-repeat="error in messages.error">{{error.msg}}</div>
+      </div>
+      <div ng-if="messages.success" role="alert" class="alert alert-success">
+        <div ng-repeat="success in messages.success">{{success.msg}}</div>
+      </div>
+      <form ng-submit="updateTemplates()" class="form-horizontal">
+        <legend>Templates</legend>
+        <div class="form-group" ng-repeat="template in templates">
+          <label ng-attr-for="{{'template'+$index}}" class="col-sm-3">{{template.name}}</label>
+          <div class="col-sm-7">
+            {{template.parsedStructure | json}}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

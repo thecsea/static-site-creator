@@ -30,6 +30,11 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
         controller: 'WebsitesCtrl',
         resolve: { loginRequired: loginRequired }
       })
+      .when('/templates', {
+        templateUrl: 'partials/templates.html',
+        controller: 'TemplatesCtrl',
+        resolve: { loginRequired: loginRequired }
+      })
       .when('/forgot', {
         templateUrl: 'partials/forgot.html',
         controller: 'ForgotCtrl',
@@ -67,4 +72,8 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
     if ($window.localStorage.user) {
       $rootScope.currentUser = JSON.parse($window.localStorage.user);
     }
-  });
+  }).filter('json', function() {
+    return function(input) {
+        return JSON.stringify(input)
+    };
+});
