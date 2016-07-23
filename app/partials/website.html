@@ -7,12 +7,12 @@
       <div ng-if="messages.success" role="alert" class="alert alert-success">
         <div ng-repeat="success in messages.success">{{success.msg}}</div>
       </div>
-      <form ng-submit="updateWebsites()" class="form-horizontal">
-        <legend>Websites</legend>
-        <div class="form-group" ng-repeat="website in websites">
-          <a ng-href="websites/{{website.id}}"><label ng-attr-for="{{'website'+$index}}" class="col-sm-3">{{website.name}}</label></a>
+      <form ng-submit="updateWebsite()" class="form-horizontal">
+        <legend>Sections of {{website.name}}</legend>
+        <div class="form-group" ng-repeat="section in website.sections">
+          <label ng-attr-for="{{'section'+$index}}" class="col-sm-3">{{section.name}}</label>
           <div class="col-sm-7">
-            <textarea ng-attr-name="{{'website'+$index}}" ng-attr-id="{{'website'+$index}}" class="form-control" readonly="readonly" ng-model="website.url"></textarea>
+            <textarea ng-attr-name="{{'section'+$index}}" ng-attr-id="{{'section'+$index}}" class="form-control" readonly="readonly" ng-model="section.path"></textarea>
           </div>
         </div>
       </form>

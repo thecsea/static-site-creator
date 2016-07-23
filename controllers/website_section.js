@@ -7,7 +7,7 @@ var currentWebsite = null;
  */
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new Website({id: req.params.id}).fetch().then((website)=>{
+    new Website({id: req.params.id}).fetch({withRelated: ['sections','sections.template']}).then((website)=>{
       if(website.get('user_id') == req.user.id) {
         currentWebsite = website;
         next();
@@ -29,9 +29,7 @@ exports.ensureAuthenticated = function(req, res, next) {
  * GET /websites/:id/sections/all
  */
 exports.websiteSectionsGet = function(req, res) {
-  currentWebsite.related('sections').fetch({withRelated: ['website', 'template']}).then((sections) => {
-    res.send({websiteSections: sections.toJSON()});
-  });
+  res.send({website: currentWebsite.toJSON()});
 };
 
 /**
