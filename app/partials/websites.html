@@ -7,15 +7,76 @@
       <div ng-if="messages.success" role="alert" class="alert alert-success">
         <div ng-repeat="success in messages.success">{{success.msg}}</div>
       </div>
-      <form ng-submit="updateWebsites()" class="form-horizontal">
+      <div class="form-horizontal">
         <legend>Websites</legend>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newWebsite()">New Website</button>
+        <br>
+        <span ng-if="websites.length == 0">There are no websites yet</span>
         <div class="form-group" ng-repeat="website in websites">
-          <a ng-href="websites/{{website.id}}"><label ng-attr-for="{{'website'+$index}}" class="col-sm-3">{{website.name}}</label></a>
-          <div class="col-sm-7">
-            <textarea ng-attr-name="{{'website'+$index}}" ng-attr-id="{{'website'+$index}}" class="form-control" readonly="readonly" ng-model="website.url"></textarea>
+          <a ng-href="websites/{{website.id}}"><label ng-attr-for="{{'website'+$index}}" class="col-sm-4">{{website.name}}</label></a>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)">edit</span>
+          </div>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)">delete</span>
           </div>
         </div>
-      </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" role="dialog" id="popup" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span class="material-icons">clear</span></button>
+          <h4 class="modal-title" ng-show="currentWebsite.id != 0">Update {{currentWebsite.name}}</h4>
+          <h4 class="modal-title" ng-show="currentWebsite.id == 0">Create website</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-if="messages.error" role="alert" class="alert alert-danger">
+            <div ng-repeat="error in messages.error">{{error.msg}}</div>
+          </div>
+          <form ng-submit="saveCurrentWebsite()" class="form-horizontal">
+            <div class="form-group">
+              <label for="name" class="col-sm-3">Name</label>
+              <div class="col-sm-7">
+                <input type="text" name="name" id="name" class="form-control" ng-model="currentWebsite.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="url" class="col-sm-3">Url</label>
+              <div class="col-sm-7">
+                <input type="url" name="url" id="url" class="form-control" ng-model="currentWebsite.url">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="git_url" class="col-sm-3">Git url</label>
+              <div class="col-sm-7">
+                <input type="text" name="git_url" id="git_url" class="form-control" ng-model="currentWebsite.git_url">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-success" ng-show="currentWebsite.id != 0">Update website</button>
+                <button type="submit" class="btn btn-success" ng-show="currentWebsite.id == 0">Create website</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Are you sure that you want to remove {{currentWebsite.name}}</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger btn-ok" data-dismiss="modal" ng-click="deleteCurrentWebsite()">Delete</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
