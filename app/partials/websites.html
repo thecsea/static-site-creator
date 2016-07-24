@@ -13,12 +13,12 @@
         <br>
         <span ng-if="websites.length == 0">There are no websites yet</span>
         <div class="form-group" ng-repeat="website in websites">
-          <a ng-href="websites/{{website.id}}"><label ng-attr-for="{{'website'+$index}}" class="col-sm-4">{{website.name}}</label></a>
+          <a class="col-sm-4" ng-href="websites/{{website.id}}">{{website.name}}</a>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)">edit</span>
+            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)" style="cursor: pointer;">edit</span>
           </div>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)">delete</span>
+            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>
       </div>
