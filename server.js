@@ -67,14 +67,20 @@ app.post('/reset/:token', userController.resetPost);
 app.get('/unlink/:provider', userController.ensureAuthenticated, userController.unlink);
 app.post('/auth/google', userController.authGoogle);
 app.get('/auth/google/callback', userController.authGoogleCallback);
+
+//websites
 app.get('/websites/all', websiteController.ensureAuthenticated, websiteController.websitesGet);
 app.post('/websites', websiteController.ensureAuthenticated, websiteController.websitesPost);
-app.put('/websites', websiteController.ensureAuthenticated, websiteController.websitesPut);
-app.delete('/websites', websiteController.ensureAuthenticated, websiteController.websitesDelete);
+app.put('/websites/:id', websiteController.ensureMine, websiteController.websitesPut);
+app.delete('/websites/:id', websiteController.ensureMine, websiteController.websitesDelete);
+
+//templates
 app.get('/templates/all', templateController.ensureAuthenticated, templateController.templatesGet);
 app.post('/templates', templateController.ensureAuthenticated, templateController.templatesPost);
 app.put('/templates', templateController.ensureAuthenticated, templateController.templatesPut);
 app.delete('/templates', templateController.ensureAuthenticated, templateController.templatesDelete);
+
+//website sections
 app.get('/websites/:id/sections/all', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsGet);
 app.post('/websites/:id/sections', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPost);
 app.put('/websites/:id/sections', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPut);

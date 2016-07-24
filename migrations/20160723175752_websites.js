@@ -6,8 +6,8 @@ exports.up = function(knex, Promise) {
             table.string('name');
             table.integer('user_id').unsigned().index().references('id').inTable('users').onDelete('cascade')
                 .onUpdate('cascade');
-            table.string('git_url');
-            table.string('url');
+            table.string('git_url').unique();
+            table.string('url').unique();
             table.timestamps();
         })
     ]);
