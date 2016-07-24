@@ -8,6 +8,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [ ] Export to javascript object for pug (ex balde) template
 - [ ] Multiple git repositories support
 - [ ] Git integration to push the site
+- [ ] Editor user
 
 ## How to use
 
