@@ -30,12 +30,12 @@ exports.websiteSectionGitGet = function(req, res) {
     clone(currentWebsiteSection, req.user)
         .then((data)=>{
             fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_')))
-                .then((text)=>{res.send({text: text});})
+                .then((text)=>{res.send({text: text}); data.cleanupCallback();})
                 .catch((err)=>{
+                    data.cleanupCallback();
                     //TODO check the type of the error
                     res.send({text: ''});
                 });
-            data.cleanupCallback();
         })
         .catch((err)=>{
             console.log(err);
@@ -60,13 +60,13 @@ exports.websiteSectionGitPut = function(req, res) {
         .then((data)=>{
             var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'));
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
-                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName)})
-                .then(()=>{res.send({text: req.body.text});})
+                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
+                .then(()=>{res.send({text: req.body.text});data.cleanupCallback();})
                 .catch((err)=>{
+                    data.cleanupCallback();
                     console.log(err);
                     res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print error is unsafe
                 });
-            data.cleanupCallback();
         })
         .catch((err)=>{
             console.log(err);
@@ -84,7 +84,7 @@ function clone(section, user){
         var cleanupCallback = values[1].cleanupCallback;
 
         var url = section.related('website').get('git_url');
-        ssh = ssh.pop();//TODO improve this
+        ssh = ssh.pop();//TODO improve this, multiple ssh kesy case
         var clonePath = path + '/git';
 
         var opts = {
@@ -118,7 +118,7 @@ function clone(section, user){
     });
 }
 
-function CommitAndPush(path, clonePath, file){
+function CommitAndPush(path, clonePath, file, message){
     var repo = null;
     var index = null;
     var oid = null;
@@ -152,12 +152,9 @@ function CommitAndPush(path, clonePath, file){
             return repo.getCommit(head);
         })
         .then(function(parent) {
-            var author = Git.Signature.create("static website creator",
-                "static-site@thecsea.it", 123456789, 60); //TODO insert current time maybe we cna use signature.now
-            var committer = Git.Signature.create("static website creator",
-                "static-site@thecsea.it", 987654321, 90);
+            var author = Git.Signature.now("static website creator", "static-site@thecsea.it");
 
-            return repo.createCommit("HEAD", author, committer, "message", oid, [parent]);
+            return repo.createCommit("HEAD", author, author, message, oid, [parent]);
         })
         .then(function(commitId) {
             //console.log("New Commit: ", commitId);
