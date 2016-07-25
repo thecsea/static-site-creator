@@ -7,15 +7,79 @@
       <div ng-if="messages.success" role="alert" class="alert alert-success">
         <div ng-repeat="success in messages.success">{{success.msg}}</div>
       </div>
-      <form ng-submit="updateWebsite()" class="form-horizontal">
+      <div class="form-horizontal">
         <legend>Sections of {{website.name}}</legend>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newSection()">New Section</button>
+        <br>
+        <span ng-if="website.sections.length == 0">There are no sections yet</span>
         <div class="form-group" ng-repeat="section in website.sections">
-          <label ng-attr-for="{{'section'+$index}}" class="col-sm-3">{{section.name}}</label>
-          <div class="col-sm-7">
-            <textarea ng-attr-name="{{'section'+$index}}" ng-attr-id="{{'section'+$index}}" class="form-control" readonly="readonly" ng-model="section.path"></textarea>
+          <span class="col-sm-4" >{{section.name}}</span>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateSection($index)" style="cursor: pointer;">edit</span>
+          </div>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteSection($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>
-      </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" role="dialog" id="popup" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span class="material-icons">clear</span></button>
+          <h4 class="modal-title" ng-show="currentSection.id != 0">Update {{currentSection.name}}</h4>
+          <h4 class="modal-title" ng-show="currentSection.id == 0">Create section</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-if="messages.error" role="alert" class="alert alert-danger">
+            <div ng-repeat="error in messages.error">{{error.msg}}</div>
+          </div>
+          <form ng-submit="saveCurrentSection()" class="form-horizontal">
+            <div class="form-group">
+              <label for="name" class="col-sm-3">Name</label>
+              <div class="col-sm-7">
+                <input type="text" name="name" id="name" class="form-control" ng-model="currentSection.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="path" class="col-sm-3">Path</label>
+              <div class="col-sm-7">
+                <input type="text" name="path" id="path" class="form-control" ng-model="currentSection.path">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="template" class="col-sm-3">Template</label>
+              <div class="col-sm-7">
+                <select class="form-control" id="template" ng-model="currentSection.template_id">
+                  <option ng-repeat="template in templates" ng-selected="template.id == currentSection.template.id" ng-value="template.id">{{template.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-success" ng-show="currentSection.id != 0">Update section</button>
+                <button type="submit" class="btn btn-success" ng-show="currentSection.id == 0">Create section</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Are you sure that you want to remove {{currentSection.name}}</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger btn-ok" data-dismiss="modal" ng-click="deleteCurrentSection()">Delete</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -37,10 +37,6 @@ exports.getCurrentSection = function(req, res, next) {
   }
 };
 
-//TODO check if website and template choosen are of the current user
-
-//TODO check id in put and delete with a middleware
-
 /**
  * GET /websites/:id/sections/all
  */
@@ -54,7 +50,7 @@ exports.websiteSectionsGet = function(req, res) {
 exports.websiteSectionsPost = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
   req.assert('path', 'Url cannot be blank').notEmpty();
-  req.assert('template_id', 'template_id cannot be blank and it must be a valid id').notEmpty().isInit();
+  req.assert('template_id', 'template_id cannot be blank and it must be a valid id').notEmpty().isInt();
 
   var errors = req.validationErrors();
 
@@ -62,8 +58,8 @@ exports.websiteSectionsPost = function(req, res) {
     return res.status(422).send(errors);
   }
 
-  Template.fetch({id: req.body.template_id}).then((template)=>{
-    if(template.user_id !== req.user.id)
+  new Template({id: req.body.template_id}).fetch().then((template)=>{
+    if(template.get('user_id') !== req.user.id)
       return res.status(403).send({ msg: 'The template inserted is not yours' });
     currentWebsite.sections().create({
       name: req.body.name,
@@ -81,7 +77,7 @@ exports.websiteSectionsPost = function(req, res) {
     });
   }).catch((err)=>{
     console.log(err);
-    return res.status(500).send({ msg: 'Error during creation of the website section' });
+    return res.status(500).send({ msg: 'Wrong template id' });
   })
 };
 
@@ -91,7 +87,7 @@ exports.websiteSectionsPost = function(req, res) {
 exports.websiteSectionsPut = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
   req.assert('path', 'Url cannot be blank').notEmpty();
-  req.assert('template_id', 'template_id cannot be blank and it must be a valid id').notEmpty().isInit();
+  req.assert('template_id', 'template_id cannot be blank and it must be a valid id').notEmpty().isInt();
 
   var errors = req.validationErrors();
 
@@ -99,8 +95,8 @@ exports.websiteSectionsPut = function(req, res) {
     return res.status(422).send(errors);
   }
 
-  Template.fetch({id: req.body.template_id}).then((template)=>{
-    if(template.user_id !== req.user.id)
+  new Template({id: req.body.template_id}).fetch().then((template)=>{
+    if(template.get('user_id') !== req.user.id)
       return res.status(403).send({ msg: 'The template inserted is not yours' });
     currentWebsiteSection.save({
       name: req.body.name,
@@ -118,7 +114,7 @@ exports.websiteSectionsPut = function(req, res) {
     });
   }).catch((err)=>{
     console.log(err);
-    return res.status(500).send({ msg: 'Error during updating of the website section' });
+    return res.status(500).send({ msg: 'Wrong template id' });
   })
 };
 

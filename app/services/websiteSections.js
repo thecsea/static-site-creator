@@ -7,11 +7,11 @@ angular.module('MyApp')
         postWebsiteSection: function(WebsiteId, data) {
             return $http.post('/websites/'+WebsiteId+'/sections', data);
         },
-        putWebsiteSection: function(WebsiteId, data) {
-            return $http.put('/websites/'+WebsiteId+'/sections', data);
+        putWebsiteSection: function(WebsiteId, id, data) {
+            return $http.put('/websites/'+WebsiteId+'/sections/'+id, data);
         },
-        deleteWebsiteSection: function(WebsiteId, data) {
-            return $http.delete('/websites/'+WebsiteId+'/sections', data);
+        deleteWebsiteSection: function(WebsiteId, id, data) {
+            return $http.delete('/websites/'+WebsiteId+'/sections/'+ id, data);
         },
     };
   });
