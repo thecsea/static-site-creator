@@ -20,7 +20,6 @@ angular.module('MyApp')
 
       $scope.deleteCurrentWebsite = function () {
           Websites.deleteWebsite($scope.currentWebsite.id).then(function (response) {
-              $scope.websites = response.data.websites;
               $scope.messages = {
                   success: [{msg:'Website deleted'}]
               };
@@ -39,7 +38,6 @@ angular.module('MyApp')
           else
               func = Websites.putWebsite($scope.currentWebsite.id, $scope.currentWebsite);
           func.then(function (response) {
-              $scope.websites = response.data.websites;
               $scope.messages = {
                   success: [{msg:$scope.currentWebsite.id == 0?'Website created':'Website updated'}]
               };

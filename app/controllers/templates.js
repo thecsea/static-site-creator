@@ -27,7 +27,6 @@ angular.module('MyApp')
 
       $scope.deleteCurrentTemplate = function () {
           Templates.deleteTemplate($scope.currentTemplate.id).then(function (response) {
-              $scope.templates = response.data.templates;
               $scope.messages = {
                   success: [{msg:'Template deleted'}]
               };
@@ -54,7 +53,6 @@ angular.module('MyApp')
           else
               func = Templates.putTemplate($scope.currentTemplate.id, $scope.currentTemplate);
           func.then(function (response) {
-              $scope.templates = response.data.templates;
               $scope.messages = {
                   success: [{msg:$scope.currentTemplate.id == 0?'Template created':'Template updated'}]
               };
