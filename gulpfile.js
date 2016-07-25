@@ -12,6 +12,7 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
 var browserify = require('gulp-browserify');
+const babel = require('gulp-babel');
 
 gulp.task('sass', function() {
   return gulp.src('public/css/main.scss')
@@ -51,10 +52,14 @@ gulp.task('vendor', function() {
 gulp.task('libs', function() {
   // Single entry point to browserify
   gulp.src('app/libs/libs.js')
+      .pipe(babel({
+          presets: ['es2015']
+      }))
       .pipe(browserify({
         insertGlobals : true,
-        debug : !gulp.env.production
+        debug : !argv.production
       }))
+      .pipe(gulpif(argv.production, uglify()))
       .pipe(gulp.dest('public/js'))
 });
 
