@@ -84,6 +84,7 @@ app.delete('/templates/:id', templateController.ensureMine, templateController.t
 //website sections
 app.get('/websites/:websiteId/sections/all', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsGet);
 app.post('/websites/:websiteId/sections', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPost);
+app.get('/websites/:websiteId/sections/:id/get', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionGet);
 app.put('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
 app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
 

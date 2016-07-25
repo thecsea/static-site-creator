@@ -48,6 +48,13 @@ exports.websiteSectionsGet = function(req, res) {
 };
 
 /**
+ * GET /websites/:id/sections/:id/get
+ */
+exports.websiteSectionGet = function(req, res) {
+    res.send({websiteSection: currentWebsiteSection.toJSON()});
+};
+
+/**
  * POST /websites/:id/sections
  */
 exports.websiteSectionsPost = function(req, res) {
