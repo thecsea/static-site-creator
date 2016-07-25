@@ -26,9 +26,12 @@ exports.ensureAuthenticated = function(req, res, next) {
 
 exports.getCurrentSection = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new WebsiteSection({id: req.params.id}).fetch().then((section)=>{
-      currentWebsiteSection = section;
-      next();
+    new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website']}).then((section)=>{
+      if(section.related('website').get('user_id') == req.user.id) {
+        currentWebsiteSection = section;
+        next();
+      }else
+        res.status(403).send({ msg: 'Forbidden' });
     }).catch(()=>{
       res.status(404).send({ msg: 'Wrong website section id' });
     });
