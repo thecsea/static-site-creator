@@ -34,7 +34,7 @@ exports.websiteSectionGitGet = function(req, res) {
                 .catch((err)=>{
                     data.cleanupCallback();
                     //TODO check the type of the error
-                    res.send({text: ''});
+                    res.send({text: '{}'});
                 });
         })
         .catch((err)=>{

@@ -9,6 +9,7 @@
       </div>
       <div class="form-horizontal">
         <legend>{{section.name}} of {{section.website.name}}</legend>
+          <span ng-show="!loaded">Loading...</span>
           {{text}}
       </div>
     </div>

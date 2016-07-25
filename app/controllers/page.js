@@ -23,6 +23,7 @@ angular.module('MyApp')
       function getText(){
           WebsiteSectionGit.clone(websiteId, id).then(function (response) {
               $scope.text = response.data.text;
+              $scope.loaded = true;
           }).catch(function (response) {
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
