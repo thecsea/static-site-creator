@@ -4,9 +4,8 @@ var Template = require('../models/Template');
 var fs = require('fs');
 var Git = require('nodegit');
 var tmp = require('tmp');
-var currentWebsite = null;
+var sanitizeFilename = require("sanitize-filename");
 var currentWebsiteSection = null;
-var repository = null;
 
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -28,8 +27,20 @@ exports.ensureAuthenticated = function(req, res, next) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    clone(currentWebsiteSection, req.user);
-  //res.send({website: currentWebsite.toJSON()});
+    clone(currentWebsiteSection, req.user)
+        .then((data)=>{
+            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_')))
+                .then((text)=>{res.send({text: text});})
+                .catch((err)=>{
+                    //TODO check the type of the error
+                    res.send({text: ''});
+                });
+            data.cleanupCallback();
+        })
+        .catch((err)=>{
+            console.log(err);
+            res.status(422).send({ msg: 'Error during cloning, please check if all data are corrects (clone url, path and so on)' }); //print error is unsafe
+        });
 };
 
 
@@ -41,52 +52,45 @@ exports.websiteSectionGitPut = function(req, res) {
 };
 
 function clone(section, user){
-    return user.related('sshKeys').fetch().then((ssh)=> {
-        createDirectory().then((value)=>{
-            var path = value.path;
-            var cleanupCallback = value.cleanupCallback;
-            //if (err) throw err;
-            console.log("Dir: ", path);
+    var sshKeys = user.related('sshKeys').fetch();
+    var dir = createDirectory();
+    return Promise.all([sshKeys, dir]).then((values)=>{
+        var ssh = values[0];
+        var path = values[1].path;
+        var cleanupCallback = values[1].cleanupCallback;
 
-            var url = section.related('website').get('git_url');
-            ssh = ssh.pop();//TODO improve this
-            var clonePath = path + 'git';
-            //var localPath = require("path").join(__dirname, "tmp");
+        var url = section.related('website').get('git_url');
+        ssh = ssh.pop();//TODO improve this
+        var clonePath = path + 'git';
 
-            var opts = {
-                fetchOpts: {
-                    callbacks: {
-                        certificateCheck: function () {
-                            return 1; //TODO improve this
-                        },
-                        credentials: function (url, userName) {
-                            return Git.Cred.sshKeyNew(
-                                userName,
-                                path + '/public.pem',
-                                path + '/private.pem',
-                                "");
-                        }
+        var opts = {
+            fetchOpts: {
+                callbacks: {
+                    certificateCheck: function () {
+                        return 1; //TODO improve this
+                    },
+                    credentials: function (url, userName) {
+                        return Git.Cred.sshKeyNew(
+                            userName,
+                            path + '/public.pem',
+                            path + '/private.pem',
+                            "");
                     }
                 }
-            };
+            }
+        };
 
-            console.log('ok1');
-            fs.writeFile(path + '/public.pem', ssh.get('public'), function (err) {
-                if (err) throw err;
-                console.log('ok2');
-                fs.writeFile(path + '/private.pem', ssh.get('private'), function (err) {
-                    if (err) throw err;
-                    console.log('ok3');
-                    return Git.Clone(url, clonePath, opts).then(function (repo) {
-                        repository = repo;
-                        console.log(repo);
-                        console.log('ok');
-                        cleanupCallback();
-                    }).catch((err)=>{console.log(err);});
-                });
+        return Promise.all([
+            filePutContents(path + '/public.pem', ssh.get('public')),
+            filePutContents(path + '/private.pem', ssh.get('private'))
+            ])
+            .then(()=>{return Git.Clone(url, clonePath, opts)})
+            .then((repo)=>{
+                return {cleanupCallback: cleanupCallback, repo: repo, clonePath: clonePath};
+            }).catch((err)=>{
+                cleanupCallback();
+                return err;
             });
-        }).catch((err)=>{console.log(err)});
-        //TODO use promise all or join
     });
 }
 
@@ -100,8 +104,19 @@ function createDirectory(){
 }
 
 function filePutContents(file, data){
-    fs.writeFile(file, data, function (err) {
-        if (err) rejct(err);
-        resolve();
+    return new Promise((resolve, reject)=>{
+        fs.writeFile(file, data, function (err) {
+            if (err) reject(err);
+            resolve();
+        })
+    });
+}
+
+function fileGetContents(file){
+    return new Promise((resolve, reject)=>{
+        fs.readFile(file, 'utf8', function (err, data) {
+            if (err) reject(err);
+            resolve(data);
+        })
     });
 }
