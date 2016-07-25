@@ -58,7 +58,7 @@ exports.websitesPost = function(req, res) {
     url: req.body.url,
     git_url: req.body.git_url
   }).then(function(website) {
-    res.send({ website: website });
+    res.send({ website: website.toJSON() });
   }).catch(function(err) {
     if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
@@ -88,7 +88,7 @@ exports.websitesPut = function(req, res) {
     url: req.body.url,
     git_url: req.body.git_url
   }).then(function(website) {
-    res.send({ website: website });
+    res.send({ website: website.toJSON() });
   }).catch(function(err) {
     if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
@@ -105,9 +105,9 @@ exports.websitesPut = function(req, res) {
  */
 exports.websitesDelete = function(req, res) {
   currentWebsite.destroy().then(function(website) {
-    res.send({ website: website });
+    res.send({ website: website.toJSON() });
   }).catch(function(err) {
     console.log(err);
-    return res.status(500).send({ msg: 'Error during creation of the website' });
+    return res.status(500).send({ msg: 'Error during deleting of the website' });
   });
 };

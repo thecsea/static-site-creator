@@ -9,6 +9,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [ ] Multiple git repositories support
 - [ ] Git integration to push the site
 - [ ] Editor user
+- [ ] Async (for client) git operations 
 
 ## How to use
 

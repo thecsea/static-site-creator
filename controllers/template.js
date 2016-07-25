@@ -55,14 +55,10 @@ exports.templatesPost = function(req, res) {
     name: req.body.name,
     parsedStructure: req.body.parsedStructure
   }).then(function(template) {
-    res.send({ template: template });
+    res.send({ template: template.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
-      return res.status(422).send({ msg: 'The url inserted was already used' });
-    }else {
-      console.log(err);
-      return res.status(500).send({ msg: 'Error during creation of the template' });
-    }
+    console.log(err);
+    return res.status(500).send({ msg: 'Error during creation of the template' });
   });
 };
 
@@ -83,14 +79,10 @@ exports.templatesPut = function(req, res) {
     name: req.body.name,
     parsedStructure: req.body.parsedStructure
   }).then(function(template) {
-    res.send({ template: template });
+    res.send({ template: template.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
-      return res.status(422).send({ msg: 'The url inserted was already used' });
-    }else {
-      console.log(err);
-      return res.status(500).send({ msg: 'Error during updating of the template' });
-    }
+    console.log(err);
+    return res.status(500).send({ msg: 'Error during updating of the template' });
   });
 };
 
@@ -100,9 +92,9 @@ exports.templatesPut = function(req, res) {
  */
 exports.templatesDelete = function(req, res) {
   currentTemplate.destroy().then(function(template) {
-    res.send({ template: template });
+    res.send({ template: {} });
   }).catch(function(err) {
     console.log(err);
-    return res.status(500).send({ msg: 'Error during creation of the template' });
+    return res.status(500).send({ msg: 'Error during deleting of the template' });
   });
 };
