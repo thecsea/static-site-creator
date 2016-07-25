@@ -13,6 +13,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [ ] Editor user
 - [ ] Async (for client) git operations 
 - [ ] Cache git repositories
+- [ ] Fast git clone (min history)
 
 ## How to use
 
