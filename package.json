@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "gulp-browserify": "^0.5.1",
     "karma": "^0.13.22",
     "karma-chai": "^0.1.0",
     "karma-coverage": "^0.5.5",

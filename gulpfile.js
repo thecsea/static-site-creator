@@ -11,6 +11,7 @@ var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
+var browserify = require('gulp-browserify');
 
 gulp.task('sass', function() {
   return gulp.src('public/css/main.scss')
@@ -46,11 +47,23 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('public/js/lib'));
 });
 
+// Basic usage
+gulp.task('libs', function() {
+  // Single entry point to browserify
+  gulp.src('app/libs/libs.js')
+      .pipe(browserify({
+        insertGlobals : true,
+        debug : !gulp.env.production
+      }))
+      .pipe(gulp.dest('public/js'))
+});
+
 gulp.task('watch', function() {
   gulp.watch('public/css/**/*.scss', ['sass']);
   gulp.watch('app/partials/**/*.html', ['templates']);
   gulp.watch('app/**/*.js',  ['angular']);
+  gulp.watch('app/libs/**/*.js',  ['libs']);
 });
 
-gulp.task('build', ['sass', 'angular', 'vendor', 'templates']);
+gulp.task('build', ['sass', 'angular', 'vendor', 'templates', 'libs']);
 gulp.task('default', ['build', 'watch']);
