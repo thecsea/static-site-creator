@@ -22,6 +22,7 @@ var contactController = require('./controllers/contact');
 var websiteController = require('./controllers/website');
 var templateController = require('./controllers/template');
 var websiteSectionController = require('./controllers/website_section');
+var websiteSectionGitController = require('./controllers/website_section_git');
 
 var app = express();
 
@@ -86,6 +87,9 @@ app.post('/websites/:websiteId/sections', websiteSectionController.ensureAuthent
 app.put('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
 app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
 
+//git operations
+app.get('/websites/:websiteId/sections/:id/git/clone', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitGet);
+app.put('/websites/:websiteId/sections/:id/git', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));
