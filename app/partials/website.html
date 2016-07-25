@@ -13,7 +13,7 @@
         <br>
         <span ng-if="website.sections.length == 0">There are no sections yet</span>
         <div class="form-group" ng-repeat="section in website.sections">
-          <span class="col-sm-4" >{{section.name}}</span>
+          <a class="col-sm-4" ng-href="websites/{{website.id}}/section/{{section.id}}">{{section.name}}</a>
           <div class="col-sm-4">
             <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateSection($index)" style="cursor: pointer;">edit</span>
           </div>

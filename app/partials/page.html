@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      <div ng-if="messages.error" role="alert" class="alert alert-danger">
+        <div ng-repeat="error in messages.error">{{error.msg}}</div>
+      </div>
+      <div ng-if="messages.success" role="alert" class="alert alert-success">
+        <div ng-repeat="success in messages.success">{{success.msg}}</div>
+      </div>
+      <div class="form-horizontal">
+        <legend>{{section.name}} of {{section.website.name}}</legend>
+          {{text}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -35,6 +35,11 @@ angular.module('MyApp', ['ngRoute', 'satellizer'])
         controller: 'WebsiteCtrl',
         resolve: { loginRequired: loginRequired }
       })
+      .when('/websites/:websiteId/section/:id', {
+        templateUrl: 'partials/page.html',
+        controller: 'PageCtrl',
+        resolve: { loginRequired: loginRequired }
+      })
       .when('/templates', {
         templateUrl: 'partials/templates.html',
         controller: 'TemplatesCtrl',

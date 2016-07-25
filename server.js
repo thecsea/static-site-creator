@@ -90,7 +90,7 @@ app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurr
 
 //git operations
 app.get('/websites/:websiteId/sections/:id/git/clone', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitGet);
-app.put('/websites/:websiteId/sections/:id/git', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
+app.put('/websites/:websiteId/sections/:id/git/push', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));

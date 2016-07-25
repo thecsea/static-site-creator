@@ -13,5 +13,8 @@ angular.module('MyApp')
         deleteWebsiteSection: function(WebsiteId, id, data) {
             return $http.delete('/websites/'+WebsiteId+'/sections/'+ id, data);
         },
+        getWebsiteSection: function(WebsiteId, id) {
+            return $http.get('/websites/'+WebsiteId+'/sections/'+id+'/get');
+        },
     };
   });

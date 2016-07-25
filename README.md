@@ -6,6 +6,7 @@ Creator of static sites for template managers (like pug ex-blade)
 
 ## Features
 - [ ] Export to javascript object for pug (ex balde) template
+- [ ] Export to any text format
 - [ ] Multiple git repositories support
 - [ ] Multiple websites support
 - [ ] Multiple sections per website support
