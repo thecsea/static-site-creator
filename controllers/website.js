@@ -29,7 +29,6 @@ exports.ensureMine = function(req, res, next) {
   }
 };
 
-//TODO check id in put and delete with a middleware
 
 /**
  * GET /websites/all

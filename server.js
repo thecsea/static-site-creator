@@ -77,8 +77,8 @@ app.delete('/websites/:id', websiteController.ensureMine, websiteController.webs
 //templates
 app.get('/templates/all', templateController.ensureAuthenticated, templateController.templatesGet);
 app.post('/templates', templateController.ensureAuthenticated, templateController.templatesPost);
-app.put('/templates', templateController.ensureAuthenticated, templateController.templatesPut);
-app.delete('/templates', templateController.ensureAuthenticated, templateController.templatesDelete);
+app.put('/templates/:id', templateController.ensureMine, templateController.templatesPut);
+app.delete('/templates/:id', templateController.ensureMine, templateController.templatesDelete);
 
 //website sections
 app.get('/websites/:id/sections/all', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsGet);
