@@ -48,7 +48,7 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('public/js/lib'));
 });
 
-// Basic usage
+//browserify libs with ES6 support
 gulp.task('libs', function() {
   // Single entry point to browserify
   gulp.src('app/libs/libs.js')
