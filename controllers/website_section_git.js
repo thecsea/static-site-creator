@@ -66,7 +66,7 @@ exports.websiteSectionGitPut = function(req, res) {
                     console.log(err);
                     res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print error is unsafe
                 });
-            //data.cleanupCallback();
+            data.cleanupCallback();
         })
         .catch((err)=>{
             console.log(err);
