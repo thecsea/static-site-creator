@@ -94,7 +94,7 @@ exports.websitesPut = function(req, res) {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
       console.log(err);
-      return res.status(500).send({ msg: 'Error during creation of the website' });
+      return res.status(500).send({ msg: 'Error during updating of the website' });
     }
   });
 };

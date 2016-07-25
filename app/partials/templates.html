@@ -7,15 +7,70 @@
       <div ng-if="messages.success" role="alert" class="alert alert-success">
         <div ng-repeat="success in messages.success">{{success.msg}}</div>
       </div>
-      <form ng-submit="updateTemplates()" class="form-horizontal">
+      <div class="form-horizontal">
         <legend>Templates</legend>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newTemplate()">New Template</button>
+          <br>
+          <span ng-if="templates.length == 0">There are no templates yet</span>
         <div class="form-group" ng-repeat="template in templates">
-          <label ng-attr-for="{{'template'+$index}}" class="col-sm-3">{{template.name}}</label>
-          <div class="col-sm-7">
-            {{template.parsedStructure | json}}
+          <span class="col-sm-4">{{template.name}}</span>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateTemplate($index)" style="cursor: pointer;">edit</span>
+          </div>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteTemplate($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>
-      </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" role="dialog" id="popup" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span class="material-icons">clear</span></button>
+          <h4 class="modal-title" ng-show="currentTemplate.id != 0">Update {{currentTemplate.name}}</h4>
+          <h4 class="modal-title" ng-show="currentTemplate.id == 0">Create template</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-if="messages.error" role="alert" class="alert alert-danger">
+            <div ng-repeat="error in messages.error">{{error.msg}}</div>
+          </div>
+          <form ng-submit="saveCurrentTemplate()" class="form-horizontal">
+            <div class="form-group">
+              <label for="name" class="col-sm-3">Name</label>
+              <div class="col-sm-7">
+                <input type="text" name="name" id="name" class="form-control" ng-model="currentTemplate.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="structure" class="col-sm-3">Structure</label>
+              <div class="col-sm-7">
+                <textarea name="structur" id="structure" class="form-control" ng-model="currentTemplate.structure" rows="20"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-success" ng-show="currentTemplate.id != 0">Update template</button>
+                <button type="submit" class="btn btn-success" ng-show="currentTemplate.id == 0">Create template</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Are you sure that you want to remove {{currentTemplate.name}}</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger btn-ok" data-dismiss="modal" ng-click="deletecurrentTemplate()">Delete</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

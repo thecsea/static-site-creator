@@ -24,7 +24,7 @@ var Template = bookshelf.Model.extend({
         return JSON.parse(this.get('structure'));
       },
       set: function(value) {
-        model.set('structure', JSON.stringify(value));
+        this.set('structure', JSON.stringify(value));
       }
     }
   },

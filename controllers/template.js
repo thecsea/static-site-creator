@@ -43,7 +43,7 @@ exports.templatesGet = function(req, res) {
  */
 exports.templatesPost = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
-  req.assert('structure', 'Structure cannot be blank').notEmpty();
+  req.assert('parsedStructure', 'Structure cannot be blank').notEmpty();
 
   var errors = req.validationErrors();
 
@@ -53,7 +53,7 @@ exports.templatesPost = function(req, res) {
 
   req.user.templates().create({
     name: req.body.name,
-    structure: req.structure
+    parsedStructure: req.body.parsedStructure
   }).then(function(template) {
     res.send({ template: template });
   }).catch(function(err) {
@@ -71,7 +71,7 @@ exports.templatesPost = function(req, res) {
  */
 exports.templatesPut = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
-  req.assert('structure', 'Structure cannot be blank').notEmpty();
+  req.assert('parsedStructure', 'Structure cannot be blank').notEmpty();
 
   var errors = req.validationErrors();
 
@@ -81,7 +81,7 @@ exports.templatesPut = function(req, res) {
 
   currentTemplate.save({
     name: req.body.name,
-    structure: req.structure
+    parsedStructure: req.body.parsedStructure
   }).then(function(template) {
     res.send({ template: template });
   }).catch(function(err) {
@@ -89,7 +89,7 @@ exports.templatesPut = function(req, res) {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
       console.log(err);
-      return res.status(500).send({ msg: 'Error during creation of the template' });
+      return res.status(500).send({ msg: 'Error during updating of the template' });
     }
   });
 };
