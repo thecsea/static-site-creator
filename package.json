@@ -50,11 +50,11 @@
     "ssh-keygen": "^0.2.1",
     "tmp": "0.0.28",
     "vinyl-buffer": "^1.0.0",
+    "gulp-browserify": "^0.5.1",
     "yargs": "^4.3.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "gulp-browserify": "^0.5.1",
     "karma": "^0.13.22",
     "karma-chai": "^0.1.0",
     "karma-coverage": "^0.5.5",
