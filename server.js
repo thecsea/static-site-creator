@@ -83,8 +83,8 @@ app.delete('/templates/:id', templateController.ensureMine, templateController.t
 //website sections
 app.get('/websites/:websiteId/sections/all', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsGet);
 app.post('/websites/:websiteId/sections', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPost);
-app.put('/websites/:websiteId/sections/:id', websiteSectionController.ensureAuthenticated, websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
-app.delete('/websites/:websiteId/sections/:id', websiteSectionController.ensureAuthenticated, websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
+app.put('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
+app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
 
 
 app.get('/', function(req, res) {
