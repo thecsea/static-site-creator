@@ -1,36 +1,45 @@
 mixin text(name, root)
     p #{name}
-        input(type="text" name=name ng-model='data.'+root+name)
+        input(type="text" name=name ng-model=root+name)
 
 mixin youtube(name, root)
     p #{name} (youtube url)
-        input(type="url" name=name ng-model='data.'+root+name)
+        input(type="url" name=name ng-model=root+name)
 
 mixin img(name, root)
     p IMG #{name} it wil be converted to base64
     //TODO get it completely before upload data
 
-mixin array(name, value, root)
+mixin array(name, value, root, level)
     h2 Array of data #{name}
     - val = value[0] //TODO do same checks
-    //TODO ng-repeat
-    if val instanceof Array
-        +array('sub', val, root+name+'.') //TODO do a better name
-    else if typeof (val) == 'object'
-        +object('', val,root+name+'.')
+    div("ng-repeat"='value'+level+' in '+root + name)
+        if val instanceof Array
+            +array('sub', val, root+name+'[$index].', level+1) //TODO do a better name
+        else if typeof (val) == 'object'
+            +object('', val,root+name+'[$index].', level+1)
+        button(ng-click=""+root + name+".remove($index)") Remove
+    button(ng-click=root + name+".push({})") Add element
 
-mixin object(name, obj, root)
+mixin object(name, obj, root, level)
     if name != ''
         h2 #{name}
     each val, index in obj
         if val instanceof Array
-            +array(index, val, root)
+            +array(index, val, root, level+1)
         else if typeof (val) == 'object'
-            +object(index, val, root+index+'.')
+            +object(index, val, root+index+'.', level+1)
         else if val == "text"
             +text(index, root)
         else if val == "youtube"
             +youtube(index, root)
 
 
-+object('Main Data', structure, '')
++object('Main Data', structure, 'data.', 0)
+
+script(type='text/javascript').
+    Array.prototype.remove = function (from, to) {
+        var rest = this.slice((to || from) + 1 || this.length);
+        this.length = from < 0 ? this.length + from : from;
+        return this.push.apply(this, rest);
+    };
