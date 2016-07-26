@@ -11,8 +11,10 @@ var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
-var browserify = require('gulp-browserify');
-const babel = require('gulp-babel');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 gulp.task('sass', function() {
   return gulp.src('public/css/main.scss')
@@ -50,17 +52,17 @@ gulp.task('vendor', function() {
 
 //browserify libs with ES6 support
 gulp.task('libs', function() {
-  // Single entry point to browserify
-  gulp.src('app/libs/libs.js')
-      .pipe(babel({
-          presets: ['es2015']
-      }))
-      .pipe(browserify({
-        insertGlobals : true,
-        debug : !argv.production
-      }))
-      .pipe(gulpif(argv.production, uglify()))
-      .pipe(gulp.dest('public/js'))
+    return browserify('app/libs/libs.js', {
+      insertGlobals : true,
+      debug : !argv.production
+    })
+    .transform(babelify, {presets: ["es2015"]})
+    .bundle()
+    .pipe(source('libs.js'))
+    .pipe(buffer())
+    //.pipe(fs.createWriteStream("bundle.js"));
+    .pipe(gulpif(argv.production, uglify()))
+    .pipe(gulp.dest('public/js'))
 });
 
 gulp.task('watch', function() {
