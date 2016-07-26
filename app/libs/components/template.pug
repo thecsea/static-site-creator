@@ -1,0 +1,7 @@
+mixin text(name)
+    p #{name}
+        input(type="text" name=name ng-model='data.'+name)
+
+each val, index in structure
+    if val == "text"
+        +text(index)

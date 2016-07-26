@@ -1,17 +1,23 @@
 angular.module('MyApp')
-  .controller('PageCtrl', function($scope, $routeParams, $auth, WebsiteSections, WebsiteSectionGit) {
+  .controller('PageCtrl', function($scope, $routeParams, $auth, $sce, WebsiteSections, WebsiteSectionGit) {
       var websiteId = $routeParams.websiteId;
       var id = $routeParams.id;
-      $scope.section = {id: 0, name:'', path:'', template_id: 0};
-      $scope.text = '';
+      $scope.section = {id: 0, name:'', path:'', template_id: 0, template:{}};
+      $scope.data = '';
+      $scope.html = '';
 
       if($auth.isAuthenticated()) {
-          getSection();
-          getText();
+          Promise.all([
+          getSection(),
+          getData()
+        ]).then(function(){
+              $scope.html = ((new window.libs.pug($scope.section.template.parsedStructure)).parse().html);
+              $scope.$apply(); //needed since we are inside a promise
+          });
       }
 
       function getSection(){
-          WebsiteSections.getWebsiteSection(websiteId, id).then(function (response) {
+          return WebsiteSections.getWebsiteSection(websiteId, id).then(function (response) {
               $scope.section = response.data.websiteSection;
           }).catch(function (response) {
               $scope.messages = {
@@ -20,14 +26,34 @@ angular.module('MyApp')
           });
       }
 
-      function getText(){
-          WebsiteSectionGit.clone(websiteId, id).then(function (response) {
-              $scope.text = response.data.text;
-              $scope.loaded = true;
+      function getData(){
+          return WebsiteSectionGit.clone(websiteId, id).then(function (response) {
+              try {
+                  $scope.data = JSON.parse(response.data.text);
+                  $scope.loaded = true;
+              }catch(e){
+                  $scope.messages = {
+                      error: [{msg:'Error during parsing JSON'}]
+                  };
+                  return ;
+              }
+
           }).catch(function (response) {
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
           });
       }
-  });
+  }).directive("compileHtml", function( $compile) {
+    return {
+        restrict: "E",
+        require: '^ngModel',
+        link: function (scope, element, attributes) {
+            scope.$watch(attributes.ngModel, function(newVal) {
+                //check if undefined
+                if(!newVal) return;
+                element.append($compile(newVal)(scope))
+            });
+        }
+    }
+});

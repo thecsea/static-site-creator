@@ -56,6 +56,7 @@ gulp.task('libs', function() {
       insertGlobals : true,
       debug : !argv.production
     })
+    .transform('brfs')
     .transform(babelify, {presets: ["es2015"]})
     .bundle()
     .pipe(source('libs.js'))
@@ -69,7 +70,7 @@ gulp.task('watch', function() {
   gulp.watch('public/css/**/*.scss', ['sass']);
   gulp.watch('app/partials/**/*.html', ['templates']);
   gulp.watch('app/**/*.js',  ['angular']);
-  gulp.watch('app/libs/**/*.js',  ['libs']);
+  gulp.watch('app/libs/**/*',  ['libs']);
 });
 
 gulp.task('build', ['sass', 'angular', 'vendor', 'templates', 'libs']);
