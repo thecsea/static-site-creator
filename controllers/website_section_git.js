@@ -30,7 +30,7 @@ exports.websiteSectionGitGet = function(req, res) {
     clone(currentWebsiteSection, req.user)
         .then((data)=>{
             fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_')))
-                .then((text)=>{res.send({text: text}); data.cleanupCallback();})
+                .then((text)=>{data.cleanupCallback(); res.send({text: text});})
                 .catch((err)=>{
                     data.cleanupCallback();
                     //TODO check the type of the error
@@ -61,7 +61,7 @@ exports.websiteSectionGitPut = function(req, res) {
             var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'));
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
                 .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
-                .then(()=>{res.send({text: req.body.text});data.cleanupCallback();})
+                .then(()=>{data.cleanupCallback(); res.send({text: req.body.text});})
                 .catch((err)=>{
                     data.cleanupCallback();
                     console.log(err);
