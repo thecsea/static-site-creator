@@ -1,7 +1,36 @@
-mixin text(name)
+mixin text(name, root)
     p #{name}
-        input(type="text" name=name ng-model='data.'+name)
+        input(type="text" name=name ng-model='data.'+root+name)
 
-each val, index in structure
-    if val == "text"
-        +text(index)
+mixin youtube(name, root)
+    p #{name} (youtube url)
+        input(type="url" name=name ng-model='data.'+root+name)
+
+mixin img(name, root)
+    p IMG #{name} it wil be converted to base64
+    //TODO get it completely before upload data
+
+mixin array(name, value, root)
+    h2 Array of data #{name}
+    - val = value[0] //TODO do same checks
+    //TODO ng-repeat
+    if val instanceof Array
+        +array('sub', val, root+name+'.') //TODO do a better name
+    else if typeof (val) == 'object'
+        +object('', val,root+name+'.')
+
+mixin object(name, obj, root)
+    if name != ''
+        h2 #{name}
+    each val, index in obj
+        if val instanceof Array
+            +array(index, val, root)
+        else if typeof (val) == 'object'
+            +object(index, val, root+index+'.')
+        else if val == "text"
+            +text(index, root)
+        else if val == "youtube"
+            +youtube(index, root)
+
+
++object('Main Data', structure, '')
