@@ -9,6 +9,7 @@ mixin youtube(name, root)
 mixin img(name, root)
     p IMG #{name}
         img(data-ng-src="data:image/png;base64,{{"+root+name+"}}" data-err-src="images/png/avatar.png")
+        //TODO image type
         //TODO img error
         input(type="file" accept="image/*")
 
