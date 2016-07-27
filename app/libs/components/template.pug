@@ -8,8 +8,7 @@ mixin youtube(name, root)
 
 mixin img(name, root)
     p IMG #{name}
-        img(data-ng-src="data:image/png;base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png")
-        //TODO image type
+        img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png")
         //TODO img error
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
