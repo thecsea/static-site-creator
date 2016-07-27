@@ -11,9 +11,10 @@ mixin img(name, root)
     //TODO get it completely before upload data
 
 mixin array(name, value, root, level)
+    - tag = "h"+ (level+1)
     if name == ''
         - root = root.slice(0,-1)
-    h2 Array of data #{name}
+    #{tag} Array of data #{name}
     - val = value[0] //TODO do same checks
     if val instanceof Array
         - addValue = "[]"
@@ -29,8 +30,9 @@ mixin array(name, value, root, level)
 
 
 mixin object(name, obj, root, level)
+    - tag = "h"+ (level+1)
     if name != ''
-        h2 #{name}
+        #{tag} #{name}
     each val, index in obj
         if val instanceof Array
             +array(index, val, root, level+1)
