@@ -16,6 +16,28 @@ angular.module('MyApp')
           });
       }
 
+      $scope.save = function () {
+          try {
+              var text = JSON.stringify($scope.data);
+          }catch(e)
+          {
+              console.error(e);
+              $scope.messages = {
+                  error: [{msg:'Error during parsing JSON'}]
+              };
+              return ;
+          }
+          WebsiteSectionGit.push(websiteId, id, {text:text}).then(function (response) {
+              $scope.messages = {
+                  success: [{msg:'Contents saved'}]
+              };
+          }).catch(function (response) {
+              $scope.messages = {
+                  error: Array.isArray(response.data) ? response.data : [response.data]
+              };
+          });
+      }
+
       function getSection(){
           return WebsiteSections.getWebsiteSection(websiteId, id).then(function (response) {
               $scope.section = response.data.websiteSection;
