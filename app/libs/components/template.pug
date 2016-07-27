@@ -7,8 +7,9 @@ mixin youtube(name, root)
         input(type="url" name=name ng-model=root+name)
 
 mixin img(name, root)
-    p IMG #{name} it wil be converted to base64
-    //TODO get it completely before upload data
+    p IMG #{name}
+        img(data-ng-src="data:image/png;base64,{{"+root+name+"}}" data-err-src="images/png/avatar.png")
+        //TODO img error
 
 mixin array(name, value, root, level)
     - tag = "h"+ (level+1)
@@ -42,6 +43,8 @@ mixin object(name, obj, root, level)
             +text(index, root)
         else if val == "youtube"
             +youtube(index, root)
+        else if val == "img"
+            +img(index, root)
 
 
 +object('Main Data', structure, 'data.', 0)
