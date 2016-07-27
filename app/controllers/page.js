@@ -1,5 +1,5 @@
 angular.module('MyApp')
-  .controller('PageCtrl', function($scope, $routeParams, $auth, $sce, WebsiteSections, WebsiteSectionGit) {
+  .controller('PageCtrl', function($scope, $routeParams, $auth, $sce, $window, WebsiteSections, WebsiteSectionGit) {
       var websiteId = $routeParams.websiteId;
       var id = $routeParams.id;
       $scope.section = {id: 0, name:'', path:'', template_id: 0, template:{}};
@@ -11,7 +11,7 @@ angular.module('MyApp')
           getSection(),
           getData()
         ]).then(function(){
-              $scope.html = ((new window.libs.pug($scope.section.template.parsedStructure)).parse().html);
+              $scope.html = ((new $window.libs.pug($scope.section.template.parsedStructure)).parse().html);
               $scope.$apply(); //needed since we are inside a promise
           });
       }
@@ -32,6 +32,7 @@ angular.module('MyApp')
                   $scope.data = JSON.parse(response.data.text);
                   $scope.loaded = true;
               }catch(e){
+                  console.error(e);
                   $scope.messages = {
                       error: [{msg:'Error during parsing JSON'}]
                   };

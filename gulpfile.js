@@ -37,6 +37,15 @@ gulp.task('angular', function() {
     .pipe(gulp.dest('public/js'));
 });
 
+gulp.task('angularLibs', function() {
+  return gulp.src([
+    'node_modules/angular-base64-upload/dist/angular-base64-upload.js',
+  ])
+      .pipe(concat('angular-lib.js'))
+      .pipe(gulpif(argv.production, uglify()))
+      .pipe(gulp.dest('public/js/lib'));
+});
+
 gulp.task('templates', function() {
   return gulp.src('app/partials/**/*.html')
     .pipe(templateCache({ root: 'partials', module: 'MyApp' }))
@@ -73,5 +82,5 @@ gulp.task('watch', function() {
   gulp.watch('app/libs/**/*',  ['libs']);
 });
 
-gulp.task('build', ['sass', 'angular', 'vendor', 'templates', 'libs']);
+gulp.task('build', ['sass', 'angular', 'vendor', 'templates', 'libs', 'angularLibs']);
 gulp.task('default', ['build', 'watch']);
