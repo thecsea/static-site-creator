@@ -11,15 +11,22 @@ mixin img(name, root)
     //TODO get it completely before upload data
 
 mixin array(name, value, root, level)
+    if name == ''
+        - root = root.slice(0,-1)
     h2 Array of data #{name}
     - val = value[0] //TODO do same checks
-    div("ng-repeat"='value'+level+' in '+root + name)
+    if val instanceof Array
+        - addValue = "[]"
+    else if typeof (val) == 'object'
+        - addValue = "{}"
+    button(ng-click=root + name+".push("+addValue+")") Add element
+    div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
         if val instanceof Array
-            +array('sub', val, root+name+'[$index].', level+1) //TODO do a better name
+            +array('', val, root+name+'[key'+level+'].', level+1) //TODO do a better name
         else if typeof (val) == 'object'
-            +object('', val,root+name+'[$index].', level+1)
-        button(ng-click=""+root + name+".remove($index)") Remove
-    button(ng-click=root + name+".push({})") Add element
+            +object('', val,root+name+'[key'+level+'].', level+1)
+        button(ng-click=root + name+".remove(key"+level+")") Remove
+
 
 mixin object(name, obj, root, level)
     if name != ''

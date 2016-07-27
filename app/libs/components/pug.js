@@ -7,7 +7,7 @@ var fs = require('fs');
 
 
 var template = fs.readFileSync(__dirname + '/template.pug', 'utf-8');
-var templateCompiled = pugLib.compile(template, {});
+var templateCompiled = pugLib.compile(template, {pretty:true});
 
 class pug{
     constructor(structure){
