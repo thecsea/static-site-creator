@@ -36,7 +36,10 @@ exports.ensureMine = function(req, res, next) {
 exports.websitesGet = function(req, res) {
   req.user.related('websites').fetch().then((websites) => {
     res.send({websites: websites.toJSON()});
-  });
+  }).catch((e)=>{
+    console.log(e);
+    return res.status(500).send({msg: 'Error during fetching websites'});
+  });;
 };
 
 /**
