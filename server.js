@@ -58,6 +58,15 @@ app.use(function(req, res, next) {
   }
 });
 
+app.use((req, res, next)=>{
+  next();
+  //TODO this doesn't work if the erorr is after the original send
+  process.on('unhandledRejection', (reason, p)=>{
+    console.log('Promise error', reason);
+    res.status(500).send('ERROR');
+  });
+});
+
 app.post('/contact', contactController.contactPost);
 app.put('/account', userController.ensureAuthenticated, userController.accountPut);
 app.delete('/account', userController.ensureAuthenticated, userController.accountDelete);
