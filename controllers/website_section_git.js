@@ -29,7 +29,7 @@ exports.ensureAuthenticated = function(req, res, next) {
 exports.websiteSectionGitGet = function(req, res) {
     clone(currentWebsiteSection, req.user)
         .then((data)=>{
-            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_')))
+            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
                 .then((text)=>{data.cleanupCallback(); res.send({text: text});})
                 .catch((err)=>{
                     data.cleanupCallback();
@@ -58,7 +58,7 @@ exports.websiteSectionGitPut = function(req, res) {
 
     clone(currentWebsiteSection, req.user)
         .then((data)=>{
-            var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'));
+            var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
                 .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
                 .then(()=>{data.cleanupCallback(); res.send({text: req.body.text});})
