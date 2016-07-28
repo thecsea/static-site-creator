@@ -23,6 +23,7 @@ var Template = bookshelf.Model.extend({
       get () {
         console.log(this.get('structure'));
         try {
+            console.log(JSON.parse('{"testOBJ":"test"}'));
           return JSON.parse(this.get('structure'));
         }catch(e){
           throw e;
