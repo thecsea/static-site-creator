@@ -30,7 +30,7 @@ var Template = bookshelf.Model.extend({
             return data;
           }
         }catch(e2){
-          throw e;
+          throw e2;
         }
       },
       set: function(value) {
