@@ -101,7 +101,7 @@ app.get('*', function(req, res) {
 });
 
 // Production error handler
-if (app.get('env') === 'production') {
+if (app.get('env') === 'production' || process.env.ENV === 'production') {
   app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.sendStatus(err.status || 500);
