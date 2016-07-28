@@ -23,7 +23,7 @@ angular.module('MyApp')
               return;
           $scope.uploading = true;
           try {
-              var text = JSON.stringify($scope.data);
+              var text = JSON.stringify($scope.data, null, 4);
           }catch(e)
           {
               console.error(e);
