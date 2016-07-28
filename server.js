@@ -59,12 +59,12 @@ app.use(function(req, res, next) {
 });
 
 app.use((req, res, next)=>{
-  next();
   //TODO this doesn't work if the erorr is after the original send
   process.on('unhandledRejection', (reason, p)=>{
     console.log('Promise error', reason);
-    res.status(500).send('ERROR');
+    res.status(500).send('Internal server error');
   });
+  next();
 });
 
 app.post('/contact', contactController.contactPost);
