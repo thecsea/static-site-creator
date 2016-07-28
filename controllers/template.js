@@ -35,7 +35,10 @@ exports.ensureMine = function(req, res, next) {
 exports.templatesGet = function(req, res) {
   req.user.related('templates').fetch().then((templates) => {
     res.send({templates: templates.toJSON()});
-  });
+  }).catch((e)=>{
+    console.log(e);
+    return res.status(500).send({msg: 'Error during fetching templates'});
+  });;
 };
 
 /**

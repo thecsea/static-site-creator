@@ -22,11 +22,20 @@ var Template = bookshelf.Model.extend({
     parsedStructure: {
       get () {
         console.log(this.get('structure'));
-        return JSON.parse(this.get('structure'));
+        try {
+          return JSON.parse(this.get('structure'));
+        }catch(e){
+          throw e;
+        }
       },
       set: function(value) {
         console.log(value);
-        this.set('structure', JSON.stringify(value));
+        try {
+          this.set('structure', JSON.stringify(value));
+        }catch (e)
+        {
+          throw e;
+        }
       }
     }
   },
