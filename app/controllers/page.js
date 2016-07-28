@@ -5,6 +5,8 @@ angular.module('MyApp')
       $scope.section = {id: 0, name:'', path:'', template_id: 0, template:{}};
       $scope.data = '';
       $scope.html = '';
+      $scope.loaded = false;
+      $scope.uploading = false;
 
       if($auth.isAuthenticated()) {
           Promise.all([
@@ -17,6 +19,9 @@ angular.module('MyApp')
       }
 
       $scope.save = function () {
+          if($scope.uploading)
+              return;
+          $scope.uploading = true;
           try {
               var text = JSON.stringify($scope.data);
           }catch(e)
@@ -28,10 +33,12 @@ angular.module('MyApp')
               return ;
           }
           WebsiteSectionGit.push(websiteId, id, {text:text}).then(function (response) {
+              $scope.uploading = false;
               $scope.messages = {
                   success: [{msg:'Contents saved'}]
               };
           }).catch(function (response) {
+              $scope.uploading = false;
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
