@@ -24,6 +24,9 @@ var Template = bookshelf.Model.extend({
         try {
           var test = '{"testOBJ":"test"}';
           if(typeof (test) == 'object')
+            console.log('yes');
+          else
+            console.log('no');
             console.log(JSON.parse(test));
           return JSON.parse(this.get('structure'));
         }catch(e){
