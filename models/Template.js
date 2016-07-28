@@ -22,14 +22,14 @@ var Template = bookshelf.Model.extend({
     parsedStructure: {
       get () {
         try {
-          var test = '{"testOBJ":"test"}';
-          if(typeof (test) == 'object')
-            console.log('yes');
-          else
-            console.log('no');
-            console.log(JSON.parse(test));
-          return JSON.parse(this.get('structure'));
-        }catch(e){
+          var data = this.get('structure');
+          try {
+            return JSON.parse(data);
+          }catch(e){
+            //TODO check if message/type is "unexpected token o"
+            return data;
+          }
+        }catch(e2){
           throw e;
         }
       },
