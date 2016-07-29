@@ -63,6 +63,9 @@ exports.websitesPost = function(req, res) {
   req.assert('url', 'Url cannot be blank').notEmpty();
   req.assert('git_url', 'Git url cannot be blank').notEmpty();
   req.assert('editors', 'Editors must exists').notEmpty();
+  if(req.body.webhook === undefined || req.body.webhook === null)
+    req.body.webhook = '';
+  //TODO webhook validation
   /*req.assert('editors', 'Editors must be an array').isArray();
   req.assert('editors.*', 'Editors must be id').isInt();*/ //TODO fix
 
@@ -77,6 +80,7 @@ exports.websitesPost = function(req, res) {
     return req.user.websites().create({
       name: req.body.name,
       url: req.body.url,
+      webhook: req.body.webhook,
       git_url: req.body.git_url
     });
   })
@@ -107,6 +111,9 @@ exports.websitesPut = function(req, res) {
   req.assert('url', 'Url cannot be blank').notEmpty();
   req.assert('git_url', 'Git url cannot be blank').notEmpty();
   req.assert('editors', 'Editors must exists').notEmpty();
+  if(req.body.webhook === undefined || req.body.webhook === null)
+    req.body.webhook = '';
+  //TODO webhook validation
   /*req.assert('editors', 'Editors must be an array').isArray();
    req.assert('editors.*', 'Editors must be id').isInt();*/ //TODO fix
 
@@ -121,6 +128,7 @@ exports.websitesPut = function(req, res) {
     return currentWebsite.save({
       name: req.body.name,
       url: req.body.url,
+      webhook: req.body.webhook,
       git_url: req.body.git_url
     });
   }).then(function(website) {
