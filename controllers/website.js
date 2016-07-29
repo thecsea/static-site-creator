@@ -48,8 +48,6 @@ exports.websitesGet = function(req, res) {
   else
     tmp = tmp.fetch({withRelated: ['editors']})
   tmp.then((websites) => {
-      /*if(website.editors == undefined || website.editors == null)
-          website.editors = [];*/
     res.send({websites: websites.toJSON()});
   }).catch((e)=>{
     console.log(e);
