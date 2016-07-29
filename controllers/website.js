@@ -42,7 +42,14 @@ exports.ensureAdmin = function(req, res, next) {
  * GET /websites/all
  */
 exports.websitesGet = function(req, res) {
-  req.user.related('websites').fetch({withRelated: ['editors']}).then((websites) => {
+  var tmp = req.user.related('websites');
+  if(req.user.get('editor'))
+    tmp = tmp.fetch();
+  else
+    tmp = tmp.fetch({withRelated: ['editors']})
+  tmp.then((websites) => {
+      /*if(website.editors == undefined || website.editors == null)
+          website.editors = [];*/
     res.send({websites: websites.toJSON()});
   }).catch((e)=>{
     console.log(e);

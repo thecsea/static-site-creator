@@ -9,16 +9,16 @@
       </div>
       <div class="form-horizontal">
         <legend>Websites</legend>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newWebsite()">New Website</button>
+        <button type="button" class="btn btn-primary" ng-if="isAdmin()" data-toggle="modal" data-target="#popup" ng-click="newWebsite()">New Website</button>
         <br>
         <span ng-if="websites.length == 0">There are no websites yet</span>
         <div class="form-group" ng-repeat="website in websites">
           <a class="col-sm-4" ng-href="websites/{{website.id}}">{{website.name}}</a>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)" style="cursor: pointer;">edit</span>
+            <span class="material-icons" ng-if="isAdmin()" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)" style="cursor: pointer;">edit</span>
           </div>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)" style="cursor: pointer;">delete</span>
+            <span class="material-icons" ng-if="isAdmin()" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>
       </div>
