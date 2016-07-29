@@ -1,4 +1,4 @@
-angular.module('MyApp', ['ngRoute', 'satellizer', 'naif.base64'])
+angular.module('MyApp', ['ngRoute', 'satellizer', 'naif.base64', 'checklist-model'])
   .config(function($routeProvider, $locationProvider, $authProvider) {
     $locationProvider.html5Mode(true);
 
@@ -95,6 +95,9 @@ angular.module('MyApp', ['ngRoute', 'satellizer', 'naif.base64'])
     $rootScope.isAdmin = function(){
       return !$rootScope.currentUser.editor;
     };
+
+    $rootScope.libs = {};
+    $rootScope.libs.utils = $window.libs.utils;
   }).filter('json', function() {
     return function(input) {
         return JSON.stringify(input)

@@ -15,7 +15,7 @@ exports.ensureAuthenticated = function(req, res, next) {
 
 exports.ensureMine = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new Website({id: req.params.id}).fetch().then((website)=>{
+    new Website({id: req.params.id}).fetch({withRelated: ['editors']}).then((website)=>{
       if(website.get('user_id') == req.user.id) {
         currentWebsite = website;
         next();
@@ -42,7 +42,7 @@ exports.ensureAdmin = function(req, res, next) {
  * GET /websites/all
  */
 exports.websitesGet = function(req, res) {
-  req.user.related('websites').fetch().then((websites) => {
+  req.user.related('websites').fetch({withRelated: ['editors']}).then((websites) => {
     res.send({websites: websites.toJSON()});
   }).catch((e)=>{
     console.log(e);
@@ -57,6 +57,9 @@ exports.websitesPost = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
   req.assert('url', 'Url cannot be blank').notEmpty();
   req.assert('git_url', 'Git url cannot be blank').notEmpty();
+  req.assert('editors', 'Editors must exists').notEmpty();
+  /*req.assert('editors', 'Editors must be an array').isArray();
+  req.assert('editors.*', 'Editors must be id').isInt();*/ //TODO fix
 
   var errors = req.validationErrors();
 
@@ -64,13 +67,21 @@ exports.websitesPost = function(req, res) {
     return res.status(422).send(errors);
   }
 
-  req.user.websites().create({
-    name: req.body.name,
-    url: req.body.url,
-    git_url: req.body.git_url
-  }).then(function(website) {
+  ensureEditorsMine(req.body.editors, req.user)
+  .then(()=>{
+    return req.user.websites().create({
+      name: req.body.name,
+      url: req.body.url,
+      git_url: req.body.git_url
+    });
+  })
+  .then(function(website) {
+    return website.editors().attach(req.body.editors);
+  })
+  .then((website)=>{
     res.send({ website: website.toJSON() });
-  }).catch(function(err) {
+  })
+  .catch(function(err) {
     if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
@@ -87,6 +98,9 @@ exports.websitesPut = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
   req.assert('url', 'Url cannot be blank').notEmpty();
   req.assert('git_url', 'Git url cannot be blank').notEmpty();
+  req.assert('editors', 'Editors must exists').notEmpty();
+  /*req.assert('editors', 'Editors must be an array').isArray();
+   req.assert('editors.*', 'Editors must be id').isInt();*/ //TODO fix
 
   var errors = req.validationErrors();
 
@@ -94,14 +108,21 @@ exports.websitesPut = function(req, res) {
     return res.status(422).send(errors);
   }
 
-  currentWebsite.save({
-    name: req.body.name,
-    url: req.body.url,
-    git_url: req.body.git_url
+  ensureEditorsMine(req.body.editors, req.user)
+  .then(()=> {
+    return currentWebsite.save({
+      name: req.body.name,
+      url: req.body.url,
+      git_url: req.body.git_url
+    });
+  }).then(function(website) {
+    return attachDetach(website, req.body.editors);
   }).then(function(website) {
     res.send({ website: website.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'EDITOR_NOT_MINE') {
+      return res.status(422).send({ msg: 'At least one editor is not yours' });
+    }else if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
       console.log(err);
@@ -122,3 +143,36 @@ exports.websitesDelete = function(req, res) {
     return res.status(500).send({ msg: 'Error during deleting of the website' });
   });
 };
+
+
+function ensureEditorsMine(editors, user){
+  return user.related('editors').fetch((realEditors)=>{
+    editors.forEach((value)=>{
+      if(realEditors.map((value)=>{return value.id}).indexOf(value) == -1)
+        Promise.reject({code: 'EDITOR_NOT_MINE', message:'At least one editor is not mine'});
+    });
+  });
+}
+
+function pluck(data, key){
+  return data.map((value)=>{return value[key];});
+}
+function arrayDiff(a, b) {
+  return a.filter(function(i) {return b.indexOf(i) < 0;});
+};
+
+
+function attachDetach(website, toSetEditors){
+  var toRemove = [];
+  var toAdd = [];
+  return website.related('editors').fetch()
+      .then((editors)=>{
+        editors = pluck(editors, 'id');
+        editors.forEach((value)=>{
+          if(toSetEditors.indexOf(value) == -1)
+            toRemove.push(value);
+        });
+        toAdd = arrayDiff(toSetEditors,editors);
+        return Promise.all([website.editors().attach(toAdd),website.editors().detach(toRemove)]);
+      }).then(()=>{return website;})
+}

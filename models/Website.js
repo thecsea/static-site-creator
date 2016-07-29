@@ -13,7 +13,7 @@ var Website = bookshelf.Model.extend({
   },
 
   editors() {
-    return this.belongsToMany('User', 'editors_website', 'website_id', 'user_id');
+    return this.belongsToMany('User', 'editors_websites', 'website_id', 'editor_id');
   },
 
   sections() {

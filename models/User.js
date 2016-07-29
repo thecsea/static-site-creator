@@ -32,7 +32,7 @@ var User = bookshelf.Model.extend({
 
   websites() {
     if(this.get('editor'))
-        this.belongsToMany('Website','editors_websites','user_id', 'website_id');
+        this.belongsToMany('Website','editors_websites','editor_id', 'website_id');
     return this.hasMany('Website');
   },
 

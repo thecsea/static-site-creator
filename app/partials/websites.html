@@ -56,6 +56,14 @@
               </div>
             </div>
             <div class="form-group">
+              <label class="col-sm-3">Editors</label>
+              <div class="col-sm-7">
+                <div class="checkbox-inline" ng-repeat="editor in editors">
+                  <label><input name="editors" type="checkbox" checklist-model="currentWebsite.editors" ng-checked="currentWebsite.editors.indexOf(editor.id) != -1" checklist-value="editor.id">{{editor.name}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
               <div class="col-sm-offset-3 col-sm-4">
                 <button type="submit" class="btn btn-success" ng-show="currentWebsite.id != 0">Update website</button>
                 <button type="submit" class="btn btn-success" ng-show="currentWebsite.id == 0">Create website</button>
