@@ -27,9 +27,7 @@ var User = bookshelf.Model.extend({
   },
 
   sshKeys() {
-    if(this.get('editor'))
-      return null;
-    return this.hasMany('SshKey');
+    return this.hasMany('SshKey'); //"if" removed to allow an easy login
   },
 
   websites() {

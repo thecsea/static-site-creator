@@ -30,6 +30,14 @@ exports.ensureMine = function(req, res, next) {
 };
 
 
+exports.ensureAdmin = function(req, res, next) {
+  if (req.isAuthenticated() && !req.user.get('editor')) {
+    next();
+  } else {
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+};
+
 /**
  * GET /websites/all
  */
