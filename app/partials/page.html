@@ -11,7 +11,6 @@
         <legend>{{section.name}} of {{section.website.name}}</legend>
         <span ng-show="!loaded">Loading...</span>
         <span ng-show="uploading">Saving...</span>
-        {{data}}
         <compile-html ng-model="html"></compile-html>
         <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="save()" ng-disabled="uploading || !loaded">Save</button>
       </div>
