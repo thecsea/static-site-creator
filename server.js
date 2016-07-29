@@ -24,6 +24,8 @@ var templateController = require('./controllers/template');
 var websiteSectionController = require('./controllers/website_section');
 var websiteSectionGitController = require('./controllers/website_section_git');
 
+process.setMaxListeners(0);
+
 var app = express();
 
 app.set('port', process.env.PORT || 3000);
