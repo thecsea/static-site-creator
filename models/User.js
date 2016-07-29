@@ -27,16 +27,33 @@ var User = bookshelf.Model.extend({
   },
 
   sshKeys() {
-    if(editor)
+    if(this.get('editor'))
+      return null;
     return this.hasMany('SshKey');
   },
 
   websites() {
+    if(this.get('editor'))
+        this.belongsToMany('Website','editors_websites','user_id', 'website_id');
     return this.hasMany('Website');
   },
 
   templates() {
+    if(this.get('editor'))
+      return null;
     return this.hasMany('Template');
+  },
+
+  parent(){
+      if(!this.get('editor'))
+          return null;
+      return this.belongsTo('Template');
+  },
+
+  editors() {
+      if(this.get('editor'))
+          return null;
+      return this.hasMany('users', 'parent_id'); //TODO filter for editor boolean
   },
 
   hashPassword: function(model, attrs, options) {

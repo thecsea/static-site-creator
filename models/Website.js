@@ -12,6 +12,10 @@ var Website = bookshelf.Model.extend({
     return this.belongsTo('User', 'user_id');
   },
 
+  editors() {
+    return this.belongsToMany('User', 'editors_website', 'website_id', 'user_id');
+  },
+
   sections() {
     return this.hasMany('WebsiteSection');
   },
