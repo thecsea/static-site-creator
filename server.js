@@ -23,6 +23,7 @@ var websiteController = require('./controllers/website');
 var templateController = require('./controllers/template');
 var websiteSectionController = require('./controllers/website_section');
 var websiteSectionGitController = require('./controllers/website_section_git');
+var editorController = require('./controllers/editor');
 
 var app = express();
 
@@ -100,6 +101,12 @@ app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurr
 //git operations
 app.get('/websites/:websiteId/sections/:id/git/clone', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitGet);
 app.put('/websites/:websiteId/sections/:id/git/push', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
+
+//editors
+app.get('/editors/all', editorController.ensureAuthenticated, editorController.editorsGet);
+app.post('/editors', editorController.ensureAuthenticated, editorController.editorsPost);
+app.put('/editors/:id', editorController.ensureMine, editorController.editorsPut);
+app.delete('/editors/:id', editorController.ensureMine, editorController.editorsDelete);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));
