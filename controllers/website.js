@@ -76,7 +76,10 @@ exports.websitesPost = function(req, res) {
     });
   })
   .then(function(website) {
-    return website.editors().attach(req.body.editors);
+    return website.editors().attach(req.body.editors).then(()=>website);
+  })
+  .then(function(website) {
+    return website.fetch({withRelated: ['editors']});
   })
   .then((website)=>{
     res.send({ website: website.toJSON() });
@@ -174,5 +177,5 @@ function attachDetach(website, toSetEditors){
         });
         toAdd = arrayDiff(toSetEditors,editors);
         return Promise.all([website.editors().attach(toAdd),website.editors().detach(toRemove)]);
-      }).then(()=>{return website;})
+      }).then(()=>{return website.refresh();})
 }
