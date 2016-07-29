@@ -72,9 +72,11 @@ exports.websiteSectionGitPut = function(req, res) {
                 .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
                 .then(()=>{data.cleanupCallback(); res.send({text: req.body.text});})
                 .then((ret)=>{
-                    var webhook = currentWebsiteSection.related('website').get('webhook')
-                    if(webhook!='')
+                    var webhook = currentWebsiteSection.related('website').get('webhook');
+                    if(webhook!='') {
+                        console.log("Calling webhook" + webhook);
                         return rp(webhook);
+                    }
                     return ret;
                 }).catch((err)=>{
                     data.cleanupCallback();
