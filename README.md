@@ -12,7 +12,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [x] Multiple sections per website support
 - [x] Git integration to push the site
 - [x] Editor users
-- [ ] Simple webhook support 
+- [x] Simple webhook support 
 - [ ] Async (for client) git operations 
 - [ ] Cache git repositories
 - [ ] Fast git clone (min history)

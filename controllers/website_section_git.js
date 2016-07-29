@@ -4,6 +4,7 @@ var Template = require('../models/Template');
 var fs = require('fs');
 var Git = require('nodegit');
 var tmp = require('tmp');
+var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
 var currentWebsiteSection = null;
 
@@ -70,7 +71,12 @@ exports.websiteSectionGitPut = function(req, res) {
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
                 .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
                 .then(()=>{data.cleanupCallback(); res.send({text: req.body.text});})
-                .catch((err)=>{
+                .then((ret)=>{
+                    var webhook = currentWebsiteSection.related('website').get('webhook')
+                    if(webhook!='')
+                        return rp(webhook);
+                    return ret;
+                }).catch((err)=>{
                     data.cleanupCallback();
                     console.log(err);
                     res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print error is unsafe

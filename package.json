@@ -51,7 +51,7 @@
     "pg": "^6.0.1",
     "pm2": "^1.0.2",
     "pug": "^2.0.0-beta4",
-    "request": "^2.69.0",
+    "request": "^2.74.0",
     "sanitize-filename": "^1.6.0",
     "sqlite3": "^3.1.1",
     "ssh-keygen": "^0.2.1",
