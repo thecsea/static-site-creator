@@ -5,13 +5,14 @@ Creator of static sites for template managers (like pug ex-blade)
 [Example site](http://static-site.thecsea.it/) we are not responsable for any issues, also issues realted to privacy and security of the storage
 
 ## Features
-- [ ] Export to javascript object for pug (ex balde) template
+- [x] Export to javascript object for pug (ex balde) template
 - [ ] Export to any text format
-- [ ] Multiple git repositories support
-- [ ] Multiple websites support
-- [ ] Multiple sections per website support
-- [ ] Git integration to push the site
-- [ ] Editor users
+- [x] Multiple git repositories support
+- [x] Multiple websites support
+- [x] Multiple sections per website support
+- [x] Git integration to push the site
+- [x] Editor users
+- [ ] Simple webhook support 
 - [ ] Async (for client) git operations 
 - [ ] Cache git repositories
 - [ ] Fast git clone (min history)
