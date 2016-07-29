@@ -74,11 +74,13 @@ exports.websiteSectionGitPut = function(req, res) {
                 .then((ret)=>{
                     var webhook = currentWebsiteSection.related('website').get('webhook');
                     if(webhook!='') {
-                        console.log("Calling webhook" + webhook);
+                        console.log("Calling webhook:" + webhook);
                         return rp(webhook);
                     }
                     return ret;
-                }).catch((err)=>{
+                })
+                .then((data)=>{console.log(data)})
+                .catch((err)=>{
                     data.cleanupCallback();
                     console.log(err);
                     res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print error is unsafe
