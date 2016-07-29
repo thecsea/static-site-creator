@@ -10,12 +10,20 @@ var currentWebsiteSection = null;
  */
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new Website({id: req.params.websiteId}).fetch({withRelated: ['sections','sections.template']}).then((website)=>{
-      if(website.get('user_id') == req.user.id) {
-        currentWebsite = website;
-        next();
-      }else
-        res.status(403).send({ msg: 'Forbidden' });
+    new Website({id: req.params.websiteId}).fetch({withRelated: ['sections','sections.template', 'editors']}).then((website)=>{
+      if(req.user.get('editor')){
+        if (pluck(website.related('editors'),'id').indexOf(req.user.id) != -1) {
+          currentWebsite = website;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }else {
+        if (website.get('user_id') == req.user.id) {
+          currentWebsite = website;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }
     }).catch(()=>{
       res.status(404).send({ msg: 'Wrong website id' });
     });
@@ -52,14 +60,20 @@ exports.ensureAdmin = function(req, res, next) {
  * GET /websites/:id/sections/all
  */
 exports.websiteSectionsGet = function(req, res) {
-  res.send({website: currentWebsite.toJSON()});
+  currentWebsite = currentWebsite.toJSON()
+  if(req.user.get('editor'))
+    delete currentWebsite.editors;
+  res.send({website: currentWebsite});
 };
 
 /**
  * GET /websites/:id/sections/:id/get
  */
 exports.websiteSectionGet = function(req, res) {
-    res.send({websiteSection: currentWebsiteSection.toJSON()});
+  currentWebsiteSection = currentWebsiteSection.toJSON();
+  if(req.user.get('editor'))
+    delete currentWebsiteSection.editors;
+  res.send({websiteSection: currentWebsiteSection});
 };
 
 /**
@@ -148,3 +162,7 @@ exports.websiteSectionsDelete = function(req, res) {
     return res.status(500).send({ msg: 'Error during deleting of the website' });
   });
 };
+
+function pluck(data, key){
+  return data.map((value)=>{return value[key];});
+}

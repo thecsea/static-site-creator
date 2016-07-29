@@ -1,5 +1,5 @@
 angular.module('MyApp')
-  .controller('WebsiteCtrl', function($scope, $routeParams, $auth, WebsiteSections, Templates) {
+  .controller('WebsiteCtrl', function($scope, $routeParams, $rootScope, $auth, WebsiteSections, Templates) {
       var id = $routeParams.id;
       $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
       $scope.website = {name:'', sections:[]};
@@ -10,18 +10,26 @@ angular.module('MyApp')
       }
 
       $scope.newSection = function () {
+          if(!$rootScope.isAdmin())
+              return;
           $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
       }
 
       $scope.updateSection = function (index) {
+          if(!$rootScope.isAdmin())
+              return;
           $scope.currentSection = $scope.website.sections[index];
       }
 
       $scope.deleteSection = function (index) {
+          if(!$rootScope.isAdmin())
+              return;
           $scope.currentSection = $scope.website.sections[index];
       }
 
       $scope.deleteCurrentSection = function () {
+          if(!$rootScope.isAdmin())
+              return;
           WebsiteSections.deleteWebsiteSection($scope.website.id, $scope.currentSection.id).then(function (response) {
               $scope.messages = {
                   success: [{msg:'Section deleted'}]
@@ -35,6 +43,8 @@ angular.module('MyApp')
       }
 
       $scope.saveCurrentSection = function () {
+          if(!$rootScope.isAdmin())
+              return;
           var func = null;
           if($scope.currentSection.id == 0)
               func = WebsiteSections.postWebsiteSection($scope.website.id, $scope.currentSection);
@@ -64,6 +74,8 @@ angular.module('MyApp')
       }
 
       function getTemplates(){
+          if(!$rootScope.isAdmin())
+              return;
           Templates.getTemplates().then(function (response) {
               $scope.templates = response.data.templates;
           }).catch(function (response) {
