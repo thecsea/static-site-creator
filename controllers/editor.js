@@ -80,12 +80,11 @@ exports.editorsPost = function(req, res) {
 exports.editorsPut = function(req, res) {
   if ('password' in req.body) {
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirm', 'Passwords must match').equals(req.body.password);
-  } else {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('email', 'Email cannot be blank').notEmpty();
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    //req.assert('confirm', 'Passwords must match').equals(req.body.password); //TODO restore this
   }
+  req.assert('email', 'Email is not valid').isEmail();
+  req.assert('email', 'Email cannot be blank').notEmpty();
+  req.sanitize('email').normalizeEmail({ remove_dots: false });
 
   var errors = req.validationErrors();
 
@@ -93,18 +92,18 @@ exports.editorsPut = function(req, res) {
     return res.status(422).send(errors);
   }
 
+  var obj = {
+    email: req.body.email,
+    name: req.body.name,
+    gender: req.body.gender,
+    location: req.body.location,
+    website: req.body.website
+  };
   if ('password' in req.body) {
-    currentEditor.save({ password: req.body.password }, { patch: true });
-  } else {
-    currentEditor.save({
-      email: req.body.email,
-      name: req.body.name,
-      gender: req.body.gender,
-      location: req.body.location,
-      website: req.body.website
-    }, { patch: true });
+    obj.password = req.body.password;
   }
-  currentEditor.then(function(editor) {
+
+  currentEditor.save(obj, { patch: true }).then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
     if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {

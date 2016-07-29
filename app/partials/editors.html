@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      <div ng-if="messages.error" role="alert" class="alert alert-danger">
+        <div ng-repeat="error in messages.error">{{error.msg}}</div>
+      </div>
+      <div ng-if="messages.success" role="alert" class="alert alert-success">
+        <div ng-repeat="success in messages.success">{{success.msg}}</div>
+      </div>
+      <div class="form-horizontal">
+        <legend>Editors</legend>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newEditor()">New Editor</button>
+        <br>
+        <span ng-if="editors.length == 0">There are no editors yet</span>
+        <div class="form-group" ng-repeat="editor in editors">
+          <span class="col-sm-4">{{editor.name}}</span>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateEditor($index)" style="cursor: pointer;">edit</span>
+          </div>
+          <div class="col-sm-4">
+            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteEditor($index)" style="cursor: pointer;">delete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" tabindex="-1" role="dialog" id="popup" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span class="material-icons">clear</span></button>
+          <h4 class="modal-title" ng-show="currentEditor.id != 0">Update {{currentEditor.name}}</h4>
+          <h4 class="modal-title" ng-show="currentEditor.id == 0">Create Editor</h4>
+        </div>
+        <div class="modal-body">
+          <div ng-if="messages.error" role="alert" class="alert alert-danger">
+            <div ng-repeat="error in messages.error">{{error.msg}}</div>
+          </div>
+          <form ng-submit="saveCurrentEditor()" class="form-horizontal">
+            <div class="form-group">
+              <label for="name" class="col-sm-3">Name</label>
+              <div class="col-sm-7">
+                <input type="text" name="name" id="name" class="form-control" ng-model="currentEditor.name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email" class="col-sm-3">email</label>
+              <div class="col-sm-7">
+                <input type="email" name="email" id="email" class="form-control" ng-model="currentEditor.email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class="col-sm-3">password (can be left blank to keep the oldest one)</label>
+              <div class="col-sm-7">
+                <input type="password" name="password" id="password" class="form-control" ng-model="currentEditor.password">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-3 col-sm-4">
+                <button type="submit" class="btn btn-success" ng-show="currentEditor.id != 0">Update editor</button>
+                <button type="submit" class="btn btn-success" ng-show="currentEditor.id == 0">Create editor</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Are you sure that you want to remove {{currentEditor.name}}</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger btn-ok" data-dismiss="modal" ng-click="deleteCurrentEditor()">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

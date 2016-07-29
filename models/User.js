@@ -53,7 +53,7 @@ var User = bookshelf.Model.extend({
   editors() {
       if(this.get('editor'))
           return null;
-      return this.hasMany('users', 'parent_id'); //TODO filter for editor boolean
+      return this.hasMany('User', 'parent_id'); //TODO filter for editor boolean
   },
 
   hashPassword: function(model, attrs, options) {
