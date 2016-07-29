@@ -23,6 +23,7 @@ var websiteController = require('./controllers/website');
 var templateController = require('./controllers/template');
 var websiteSectionController = require('./controllers/website_section');
 var websiteSectionGitController = require('./controllers/website_section_git');
+var editorController = require('./controllers/editor');
 
 process.setMaxListeners(0);
 
@@ -82,9 +83,9 @@ app.get('/auth/google/callback', userController.authGoogleCallback);
 
 //websites
 app.get('/websites/all', websiteController.ensureAuthenticated, websiteController.websitesGet);
-app.post('/websites', websiteController.ensureAuthenticated, websiteController.websitesPost);
-app.put('/websites/:id', websiteController.ensureMine, websiteController.websitesPut);
-app.delete('/websites/:id', websiteController.ensureMine, websiteController.websitesDelete);
+app.post('/websites', websiteController.ensureAdmin, websiteController.ensureAuthenticated, websiteController.websitesPost);
+app.put('/websites/:id', websiteController.ensureAdmin, websiteController.ensureMine, websiteController.websitesPut);
+app.delete('/websites/:id', websiteController.ensureAdmin, websiteController.ensureMine, websiteController.websitesDelete);
 
 //templates
 app.get('/templates/all', templateController.ensureAuthenticated, templateController.templatesGet);
@@ -94,14 +95,20 @@ app.delete('/templates/:id', templateController.ensureMine, templateController.t
 
 //website sections
 app.get('/websites/:websiteId/sections/all', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsGet);
-app.post('/websites/:websiteId/sections', websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPost);
+app.post('/websites/:websiteId/sections', websiteSectionController.ensureAdmin, websiteSectionController.ensureAuthenticated, websiteSectionController.websiteSectionsPost);
 app.get('/websites/:websiteId/sections/:id/get', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionGet);
-app.put('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
-app.delete('/websites/:websiteId/sections/:id', websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
+app.put('/websites/:websiteId/sections/:id', websiteSectionController.ensureAdmin, websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsPut);
+app.delete('/websites/:websiteId/sections/:id', websiteSectionController.ensureAdmin, websiteSectionController.getCurrentSection, websiteSectionController.websiteSectionsDelete);
 
 //git operations
 app.get('/websites/:websiteId/sections/:id/git/clone', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitGet);
 app.put('/websites/:websiteId/sections/:id/git/push', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
+
+//editors
+app.get('/editors/all', editorController.ensureAuthenticated, editorController.editorsGet);
+app.post('/editors', editorController.ensureAuthenticated, editorController.editorsPost);
+app.put('/editors/:id', editorController.ensureMine, editorController.editorsPut);
+app.delete('/editors/:id', editorController.ensureMine, editorController.editorsDelete);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'app', 'index.html'));

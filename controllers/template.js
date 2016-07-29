@@ -6,7 +6,7 @@ var currentTemplate = null;
  * Login required middleware
  */
 exports.ensureAuthenticated = function(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && !req.user.get('editor')) {
     next();
   } else {
     res.status(401).send({ msg: 'Unauthorized' });
@@ -14,7 +14,7 @@ exports.ensureAuthenticated = function(req, res, next) {
 };
 
 exports.ensureMine = function(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && !req.user.get('editor')) {
     new Template({id: req.params.id}).fetch().then((template)=>{
       if(template.get('user_id') == req.user.id) {
         currentTemplate = template;

@@ -9,16 +9,16 @@
       </div>
       <div class="form-horizontal">
         <legend>Sections of {{website.name}}</legend>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup" ng-click="newSection()">New Section</button>
+        <button type="button" class="btn btn-primary" ng-if="isAdmin()" data-toggle="modal" data-target="#popup" ng-click="newSection()">New Section</button>
         <br>
         <span ng-if="website.sections.length == 0">There are no sections yet</span>
         <div class="form-group" ng-repeat="section in website.sections">
           <a class="col-sm-4" ng-href="websites/{{website.id}}/section/{{section.id}}">{{section.name}}</a>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#popup" ng-click="updateSection($index)" style="cursor: pointer;">edit</span>
+            <span class="material-icons" data-toggle="modal" ng-if="isAdmin()" data-target="#popup" ng-click="updateSection($index)" style="cursor: pointer;">edit</span>
           </div>
           <div class="col-sm-4">
-            <span class="material-icons" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteSection($index)" style="cursor: pointer;">delete</span>
+            <span class="material-icons" data-toggle="modal" ng-if="isAdmin()" data-target="#confirm-delete" ng-click="deleteSection($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>
         </div>

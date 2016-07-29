@@ -5,5 +5,7 @@
 window.libs = {};
 
 var pug = require("./components/pug");
-
 window.libs.pug = pug;
+
+var utils = require("./components/utils");
+window.libs.utils = utils;

@@ -40,6 +40,7 @@ gulp.task('angular', function() {
 gulp.task('angularLibs', function() {
   return gulp.src([
     'node_modules/angular-base64-upload/dist/angular-base64-upload.js',
+    'node_modules/checklist-model/checklist-model.js',
   ])
       .pipe(concat('angular-lib.js'))
       .pipe(gulpif(argv.production, uglify()))

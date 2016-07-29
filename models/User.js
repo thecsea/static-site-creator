@@ -15,26 +15,43 @@ var User = bookshelf.Model.extend({
     this.on('saving', this.hashPassword, this);
     var _this = this;
     this.on('created', function(model, attrs, options) {
-        _this.sshKeys().create({name: 'default'})//.save(new SshKey())
-          .then(function(user) {
-          })
-          .catch(function(err) {
-            console.error(err);
-              //return res.status(400).send({ msg: 'Problems occurred during generation of the keys' }); //TODO return error
-          });
+        if(!_this.get('editor'))
+          _this.sshKeys().create({name: 'default'})//.save(new SshKey())
+            .then(function(user) {
+            })
+            .catch(function(err) {
+              console.error(err);
+                //return res.status(400).send({ msg: 'Problems occurred during generation of the keys' }); //TODO return error
+            });
     });
   },
 
   sshKeys() {
-    return this.hasMany('SshKey');
+    return this.hasMany('SshKey'); //"if" removed to allow an easy login
   },
 
   websites() {
+    if(this.get('editor'))
+      return this.belongsToMany('Website', 'editors_websites', 'editor_id', 'website_id');
     return this.hasMany('Website');
   },
 
   templates() {
+    if(this.get('editor'))
+      return null;
     return this.hasMany('Template');
+  },
+
+  parent(){
+      if(!this.get('editor'))
+          return null;
+      return this.belongsTo('Template');
+  },
+
+  editors() {
+      if(this.get('editor'))
+          return null;
+      return this.hasMany('User', 'parent_id'); //TODO filter for editor boolean
   },
 
   hashPassword: function(model, attrs, options) {

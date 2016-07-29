@@ -10,12 +10,20 @@ var currentWebsiteSection = null;
  */
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new Website({id: req.params.websiteId}).fetch({withRelated: ['sections','sections.template']}).then((website)=>{
-      if(website.get('user_id') == req.user.id) {
-        currentWebsite = website;
-        next();
-      }else
-        res.status(403).send({ msg: 'Forbidden' });
+    new Website({id: req.params.websiteId}).fetch({withRelated: ['sections','sections.template', 'editors']}).then((website)=>{
+      if(req.user.get('editor')){
+        if (pluck(website.related('editors'),'id').indexOf(req.user.id) != -1) {
+          currentWebsite = website;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }else {
+        if (website.get('user_id') == req.user.id) {
+          currentWebsite = website;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }
     }).catch(()=>{
       res.status(404).send({ msg: 'Wrong website id' });
     });
@@ -26,15 +34,31 @@ exports.ensureAuthenticated = function(req, res, next) {
 
 exports.getCurrentSection = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website','template']}).then((section)=>{
-      if(section.related('website').get('user_id') == req.user.id) {
-        currentWebsiteSection = section;
-        next();
-      }else
-        res.status(403).send({ msg: 'Forbidden' });
+    new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website', 'website.editors','template']}).then((section)=>{
+      if(req.user.get('editor')){
+        if (pluck(section.related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
+          currentWebsiteSection = section;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }else {
+        if (section.related('website').get('user_id') == req.user.id) {
+          currentWebsiteSection = section;
+          next();
+        } else
+          res.status(403).send({msg: 'Forbidden'});
+      }
     }).catch(()=>{
       res.status(404).send({ msg: 'Wrong website section id' });
     });
+  } else {
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+};
+
+exports.ensureAdmin = function(req, res, next) {
+  if (req.isAuthenticated() && !req.user.get('editor')) {
+    next();
   } else {
     res.status(401).send({ msg: 'Unauthorized' });
   }
@@ -44,14 +68,20 @@ exports.getCurrentSection = function(req, res, next) {
  * GET /websites/:id/sections/all
  */
 exports.websiteSectionsGet = function(req, res) {
-  res.send({website: currentWebsite.toJSON()});
+  currentWebsite = currentWebsite.toJSON()
+  if(req.user.get('editor'))
+    delete currentWebsite.editors;
+  res.send({website: currentWebsite});
 };
 
 /**
  * GET /websites/:id/sections/:id/get
  */
 exports.websiteSectionGet = function(req, res) {
-    res.send({websiteSection: currentWebsiteSection.toJSON()});
+  currentWebsiteSection = currentWebsiteSection.toJSON();
+  if(req.user.get('editor'))
+    delete currentWebsiteSection.website.editors;
+  res.send({websiteSection: currentWebsiteSection});
 };
 
 /**
@@ -140,3 +170,7 @@ exports.websiteSectionsDelete = function(req, res) {
     return res.status(500).send({ msg: 'Error during deleting of the website' });
   });
 };
+
+function pluck(data, key){
+  return data.map((value)=>{return value[key];});
+}

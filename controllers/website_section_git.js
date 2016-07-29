@@ -9,12 +9,20 @@ var currentWebsiteSection = null;
 
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
-    new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website']}).then((section)=>{
-      if(section.related('website').get('user_id') == req.user.id) {
-        currentWebsiteSection = section;
-        next();
-      }else
-        res.status(403).send({ msg: 'Forbidden' });
+    new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website', 'website.user','website.editors']}).then((section)=>{
+      if(req.user.get('editor')){
+        if (pluck(section.related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
+           currentWebsiteSection = section;
+           next();
+        } else
+           res.status(403).send({msg: 'Forbidden'});
+      }else {
+        if (section.related('website').get('user_id') == req.user.id) {
+           currentWebsiteSection = section;
+           next();
+        } else
+           res.status(403).send({msg: 'Forbidden'});
+      }
     }).catch(()=>{
       res.status(404).send({ msg: 'Wrong website section id' });
     });
@@ -27,7 +35,7 @@ exports.ensureAuthenticated = function(req, res, next) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    clone(currentWebsiteSection, req.user)
+    clone(currentWebsiteSection)
         .then((data)=>{
             fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
                 .then((text)=>{data.cleanupCallback(); res.send({text: text});})
@@ -39,7 +47,7 @@ exports.websiteSectionGitGet = function(req, res) {
         })
         .catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are corrects (clone url, path and so on)' }); //print error is unsafe
+            res.status(422).send({ msg: 'Error during cloning, please check if all data are correct (clone url, path and so on)' }); //print error is unsafe
         });
 };
 
@@ -56,7 +64,7 @@ exports.websiteSectionGitPut = function(req, res) {
         return res.status(422).send(errors);
     }
 
-    clone(currentWebsiteSection, req.user)
+    clone(currentWebsiteSection)
         .then((data)=>{
             var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
@@ -75,8 +83,8 @@ exports.websiteSectionGitPut = function(req, res) {
 };
 
 //TODO create a class to manage everything
-function clone(section, user){
-    var sshKeys = user.related('sshKeys').fetch();
+function clone(section){
+    var sshKeys = section.related('website').related('user').related('sshKeys').fetch();
     var dir = createDirectory();
     return Promise.all([sshKeys, dir]).then((values)=>{
         var ssh = values[0];
@@ -122,6 +130,7 @@ function CommitAndPush(path, clonePath, file, message){
     var repo = null;
     var index = null;
     var oid = null;
+    var remote = null;
     return Git.Repository.open(clonePath)
         .then(function(repoResult) {
             repo = repoResult;
@@ -209,4 +218,8 @@ function fileGetContents(file){
             resolve(data);
         })
     });
+}
+
+function pluck(data, key){
+    return data.map((value)=>{return value[key];});
 }
