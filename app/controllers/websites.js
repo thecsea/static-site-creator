@@ -2,7 +2,7 @@ angular.module('MyApp')
   .controller('WebsitesCtrl', function($scope, $rootScope, $auth, Websites, Editors) {
         $scope.websites = [];
         $scope.editors = [];
-        $scope.currentWebsite = {id:0, name:'', url: '', git_url:'', editors: []};
+        $scope.currentWebsite = {id:0, name:'', url: '', git_url:'', webhook:'', editors: []};
         if($auth.isAuthenticated()) {
             getWebsites();
             getEditors();
@@ -11,7 +11,7 @@ angular.module('MyApp')
       $scope.newWebsite = function () {
           if(!$rootScope.isAdmin())
               return;
-          $scope.currentWebsite = {id:0, name:'', url: '', git_url:'', editors: []};
+          $scope.currentWebsite = {id:0, name:'', url: '', git_url:'', webhook:'', editors: []};
       }
 
       $scope.updateWebsite = function (index) {

@@ -56,6 +56,12 @@
               </div>
             </div>
             <div class="form-group">
+              <label for="webhook" class="col-sm-3">Webhook (optional)</label>
+              <div class="col-sm-7">
+                <input type="url" name="webhook" id="webhook" class="form-control" ng-model="currentWebsite.webhook">
+              </div>
+            </div>
+            <div class="form-group">
               <label class="col-sm-3">Editors</label>
               <div class="col-sm-7">
                 <div class="checkbox-inline" ng-repeat="editor in editors">
