@@ -7,6 +7,7 @@ var tmp = require('tmp');
 var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
 var currentWebsiteSection = null;
+var cleanupCallback = function(){};
 
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -39,16 +40,16 @@ exports.websiteSectionGitGet = function(req, res) {
     clone(currentWebsiteSection)
         .then((data)=>{
             fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
-                .then((text)=>{data.cleanupCallback(); res.send({text: text});})
+                .then((text)=>{cleanupCallback(); res.send({text: text});})
                 .catch((err)=>{
-                    data.cleanupCallback();
+                    cleanupCallback();
                     //TODO check the type of the error
                     res.send({text: '{}'});
                 });
         })
         .catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are correct (clone url, path and so on)' }); //print error is unsafe
+            res.status(422).send({ msg: 'Error during cloning, please check if all data are correct (clone url, path and so on)' }); //print real error is unsafe
         });
 };
 
@@ -70,20 +71,23 @@ exports.websiteSectionGitPut = function(req, res) {
             var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
                 .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
-                .then(()=>{data.cleanupCallback(); res.send({text: req.body.text});})
                 .then((ret)=>{
                     var webhook = currentWebsiteSection.related('website').get('webhook');
                     if(webhook!='') {
-                        console.log("Calling webhook:" + webhook);
-                        return rp(webhook);
+                        console.log("Calling webhook: " + webhook);
+                        return rp(webhook).then((data)=>{console.log(data); Promise.resolve(ret)});
                     }
                     return ret;
                 })
-                .then((data)=>{console.log(data)})
+                .then((ret)=>{
+                    cleanupCallback();
+                    res.send({text: req.body.text});
+                    return ret;
+                })
                 .catch((err)=>{
-                    data.cleanupCallback();
+                    cleanupCallback();
                     console.log(err);
-                    res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print error is unsafe
+                    res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print real error is unsafe
                 });
         })
         .catch((err)=>{
@@ -99,7 +103,7 @@ function clone(section){
     return Promise.all([sshKeys, dir]).then((values)=>{
         var ssh = values[0];
         var path = values[1].path;
-        var cleanupCallback = values[1].cleanupCallback;
+        cleanupCallback = values[1].cleanupCallback;
 
         var url = section.related('website').get('git_url');
         ssh = ssh.pop();//TODO improve this, multiple ssh kesy case
@@ -128,10 +132,7 @@ function clone(section){
             ])
             .then(()=>{return Git.Clone(url, clonePath, opts)})
             .then((repo)=>{
-                return {cleanupCallback: cleanupCallback, repo: repo, clonePath: clonePath, path:path};
-            }).catch((err)=>{
-                cleanupCallback();
-                return err;
+                return {repo: repo, clonePath: clonePath, path:path};
             });
     });
 }

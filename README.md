@@ -16,6 +16,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [ ] Async (for client) git operations 
 - [ ] Cache git repositories
 - [ ] Fast git clone (min history)
+- [ ] Multiple remote server support for the same repository (multiple push) 
 
 ## How to use
 
