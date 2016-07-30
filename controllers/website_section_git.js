@@ -74,27 +74,27 @@ exports.websiteSectionGitStatusGet = function(req, res) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    createStatus('clone', 0, 2)
+    createStatus('clone', 0, 2, 'Cloning data')
         .then((status)=>{
             res.send({status: status});
             //async execution
             clone(currentWebsiteSection)
             .then((data)=> {
-                return status.save({status:1}).then(()=>data);
+                return status.save({status:1, status_description:'Reading data'}).then(()=>data);
             }).then((data)=> {
                 return fileGetContents(data.clonePath + '/data/' + sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json');
             }).then((text)=>{
                 cleanupCallback();
-                return status.save({status:2, data:text, completed:true});
+                return status.save({status:2, data:text, completed:true, status_description:'Done'});
             }).catch((err)=>{
                 console.log(err);
                 cleanupCallback();
                 //fileGetContents error
                 if(err.code == 'ENOENT') {
                     //TODO this can caused even by other problems not only no content
-                    return status.save({status:2, data:'{}', completed:true});
+                    return status.save({status:2, data:'{}', completed:true, status_description:'Done'});
                 }else{
-                    return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
+                    return status.save({error:true, status_description:'Error during cloning, please check if all data are corrects (clone url, path and so on)', completed:true});
                 }
             });
         }).catch((err)=>{
@@ -116,24 +116,24 @@ exports.websiteSectionGitPut = function(req, res) {
         return res.status(422).send(errors);
     }
     var dataGlobal = null;
+    var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json';
 
-    createStatus('clone', 0, 2, req.body.data)
+    createStatus('push', 0, 4, 'Cloning data', req.body.data)
         .then((status)=> {
             res.send({status: status});
             //async execution
             clone(currentWebsiteSection)
             .then((data)=> {
                 dataGlobal = data;
-                return status.save({status:1});
+                return status.save({status:1, status_description:'Writing content in tmp file'});
             }).then((data)=> {
-                var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json';
-                return filePutContents(data.clonePath + '/data/' + fileName, status.get('data'))
-            }).then(()=>status.save({status:2}))
-            .then(()=>CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated'))
-            .then(()=>status.save({status:3}))
+                return filePutContents(dataGlobal.clonePath + '/data/' + fileName, status.get('data'))
+            }).then(()=>status.save({status:2, status_description:'Pushing data'}))
+            .then(()=>CommitAndPush(dataGlobal.path, dataGlobal.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated'))
+            .then(()=>status.save({status:3, status_description:'Calling webhook'}))
             .then((ret)=>{
                 var webhook = currentWebsiteSection.related('website').get('webhook');
-                if(webhook!='') {
+                if(webhook!=null && webhook != undefined && webhook!='') {
                     console.log("Calling webhook: " + webhook);
                     return rp(webhook).then((data)=>{Promise.resolve(ret)});
                 }
@@ -141,13 +141,13 @@ exports.websiteSectionGitPut = function(req, res) {
             })
             .then(()=>{
                 cleanupCallback();
-                return status.save({status:4, data:'{}', completed:true});
+                return status.save({status:4, data:'{}', completed:true, status_description:'Done'});
             })
             .catch((err)=>{
                 console.log(err);
                 cleanupCallback();
-                //TODO if for webhook errors
-                return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
+                //TODO if for webhook errors saying that data are pushed but the webhook was nto called
+                return status.save({error:true, status_description:'Error during cloning, please check if all data are corrects (clone url, path and so on)', completed:true});
             });
         }).catch((err)=>{
             console.log(err);
@@ -294,8 +294,8 @@ function pluck(data, key){
     return data.map((value)=>{return value[key];});
 }
 
-function createStatus(type, status, total_status, data){
+function createStatus(type, status, total_status, status_description, data){
     if(data === undefined || data === null)
         data = '';
-    return currentWebsiteSection.gitStatus().create({type: type, status: status, total_status: total_status, completed:false});
+    return currentWebsiteSection.gitStatus().create({type: type, status: status, total_status: total_status, completed:false, error:false, status_description: status_description,data:data});
 }
