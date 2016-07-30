@@ -6,7 +6,6 @@ var Git = require('nodegit');
 var tmp = require('tmp');
 var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
-var currentWebsiteSection = null;
 var cleanupCallback = function(){};
 
 exports.ensureAuthenticated = function(req, res, next) {
@@ -14,13 +13,13 @@ exports.ensureAuthenticated = function(req, res, next) {
     new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website', 'website.user','website.editors']}).then((section)=>{
       if(req.user.get('editor')){
         if (pluck(section.related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
-           currentWebsiteSection = section;
+            req.currentWebsiteSection = section;
            next();
         } else
            res.status(403).send({msg: 'Forbidden'});
       }else {
         if (section.related('website').get('user_id') == req.user.id) {
-           currentWebsiteSection = section;
+            req.currentWebsiteSection = section;
            next();
         } else
            res.status(403).send({msg: 'Forbidden'});
@@ -37,9 +36,9 @@ exports.ensureAuthenticated = function(req, res, next) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    clone(currentWebsiteSection)
+    clone(req.currentWebsiteSection)
         .then((data)=>{
-            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
+            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
                 .then((text)=>{cleanupCallback(); res.send({text: text});})
                 .catch((err)=>{
                     cleanupCallback();
@@ -66,13 +65,13 @@ exports.websiteSectionGitPut = function(req, res) {
         return res.status(422).send(errors);
     }
 
-    clone(currentWebsiteSection)
+    clone(req.currentWebsiteSection)
         .then((data)=>{
-            var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
+            var fileName = sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
             filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
-                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
+                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, req.currentWebsiteSection.get('name') + ' updated')})
                 .then((ret)=>{
-                    var webhook = currentWebsiteSection.related('website').get('webhook');
+                    var webhook = req.currentWebsiteSection.related('website').get('webhook');
                     if(webhook!='') {
                         console.log("Calling webhook: " + webhook);
                         return rp(webhook).then((data)=>{Promise.resolve(ret)});

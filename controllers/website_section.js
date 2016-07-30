@@ -1,8 +1,6 @@
 var Website = require('../models/Website');
 var WebsiteSection = require('../models/WebsiteSection');
 var Template = require('../models/Template');
-var currentWebsite = null;
-var currentWebsiteSection = null;
 
 /**
  * Login required middleware
@@ -13,13 +11,13 @@ exports.ensureAuthenticated = function(req, res, next) {
     new Website({id: req.params.websiteId}).fetch({withRelated: ['sections','sections.template', 'editors']}).then((website)=>{
       if(req.user.get('editor')){
         if (pluck(website.related('editors'),'id').indexOf(req.user.id) != -1) {
-          currentWebsite = website;
+          req.currentWebsite = website;
           next();
         } else
           res.status(403).send({msg: 'Forbidden'});
       }else {
         if (website.get('user_id') == req.user.id) {
-          currentWebsite = website;
+          req.currentWebsite = website;
           next();
         } else
           res.status(403).send({msg: 'Forbidden'});
@@ -37,13 +35,13 @@ exports.getCurrentSection = function(req, res, next) {
     new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website', 'website.editors','template']}).then((section)=>{
       if(req.user.get('editor')){
         if (pluck(section.related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
-          currentWebsiteSection = section;
+          req.currentWebsiteSection = section;
           next();
         } else
           res.status(403).send({msg: 'Forbidden'});
       }else {
         if (section.related('website').get('user_id') == req.user.id) {
-          currentWebsiteSection = section;
+          req.currentWebsiteSection = section;
           next();
         } else
           res.status(403).send({msg: 'Forbidden'});
@@ -68,7 +66,7 @@ exports.ensureAdmin = function(req, res, next) {
  * GET /websites/:id/sections/all
  */
 exports.websiteSectionsGet = function(req, res) {
-  currentWebsite = currentWebsite.toJSON()
+  var currentWebsite = req.currentWebsite.toJSON()
   if(req.user.get('editor'))
     delete currentWebsite.editors;
   res.send({website: currentWebsite});
@@ -78,7 +76,7 @@ exports.websiteSectionsGet = function(req, res) {
  * GET /websites/:id/sections/:id/get
  */
 exports.websiteSectionGet = function(req, res) {
-  currentWebsiteSection = currentWebsiteSection.toJSON();
+  var currentWebsiteSection = req.currentWebsiteSection.toJSON();
   if(req.user.get('editor'))
     delete currentWebsiteSection.website.editors;
   res.send({websiteSection: currentWebsiteSection});
@@ -101,7 +99,7 @@ exports.websiteSectionsPost = function(req, res) {
   new Template({id: req.body.template_id}).fetch().then((template)=>{
     if(template.get('user_id') !== req.user.id)
       return res.status(403).send({ msg: 'The template inserted is not yours' });
-    currentWebsite.sections().create({
+    req.currentWebsite.sections().create({
       name: req.body.name,
       path: req.body.path,
       template_id: req.body.template_id
@@ -138,7 +136,7 @@ exports.websiteSectionsPut = function(req, res) {
   new Template({id: req.body.template_id}).fetch().then((template)=>{
     if(template.get('user_id') !== req.user.id)
       return res.status(403).send({ msg: 'The template inserted is not yours' });
-    currentWebsiteSection.save({
+    req.currentWebsiteSection.save({
       name: req.body.name,
       path: req.body.path,
       template_id: req.body.template_id
@@ -163,7 +161,7 @@ exports.websiteSectionsPut = function(req, res) {
  * DELETE /websites/:id/sections
  */
 exports.websiteSectionsDelete = function(req, res) {
-  currentWebsiteSection.destroy().then(function(section) {
+  req.currentWebsiteSection.destroy().then(function(section) {
     res.send({ websiteSection: section.toJSON() });
   }).catch(function(err) {
     console.log(err);

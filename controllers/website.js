@@ -1,6 +1,5 @@
 var User = require('../models/User');
 var Website = require('../models/Website');
-var currentWebsite = null;
 
 /**
  * Login required middleware
@@ -17,7 +16,7 @@ exports.ensureMine = function(req, res, next) {
   if (req.isAuthenticated()) {
     new Website({id: req.params.id}).fetch({withRelated: ['editors']}).then((website)=>{
       if(website.get('user_id') == req.user.id) {
-        currentWebsite = website;
+        req.currentWebsite = website;
         next();
       }else
         res.status(403).send({ msg: 'Forbidden' });
@@ -125,7 +124,7 @@ exports.websitesPut = function(req, res) {
 
   ensureEditorsMine(req.body.editors, req.user)
   .then(()=> {
-    return currentWebsite.save({
+    return req.currentWebsite.save({
       name: req.body.name,
       url: req.body.url,
       webhook: req.body.webhook,
@@ -152,7 +151,7 @@ exports.websitesPut = function(req, res) {
  * DELETE /websites
  */
 exports.websitesDelete = function(req, res) {
-  currentWebsite.destroy().then(function(website) {
+  req.currentWebsite.destroy().then(function(website) {
     res.send({ website: website.toJSON() });
   }).catch(function(err) {
     console.log(err);
