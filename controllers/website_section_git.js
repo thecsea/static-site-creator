@@ -96,7 +96,6 @@ exports.websiteSectionGitGet = function(req, res) {
                 }else{
                     return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
                 }
-
             });
         }).catch((err)=>{
             console.log(err);
@@ -109,41 +108,50 @@ exports.websiteSectionGitGet = function(req, res) {
  * PUT /websites/:id/sections/:id/git
  */
 exports.websiteSectionGitPut = function(req, res) {
-    req.assert('text', 'Text cannot be blank').notEmpty(); //TODO not exists better
+    req.assert('data', 'Data cannot be blank').notEmpty(); //TODO not exists better
 
     var errors = req.validationErrors();
 
     if (errors) {
         return res.status(422).send(errors);
     }
+    var dataGlobal = null;
 
-    clone(currentWebsiteSection)
-        .then((data)=>{
-            var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
-            filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
-                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated')})
-                .then((ret)=>{
-                    var webhook = currentWebsiteSection.related('website').get('webhook');
-                    if(webhook!='') {
-                        console.log("Calling webhook: " + webhook);
-                        return rp(webhook).then((data)=>{Promise.resolve(ret)});
-                    }
-                    return ret;
-                })
-                .then((ret)=>{
-                    cleanupCallback();
-                    res.send({text: req.body.text});
-                    return ret;
-                })
-                .catch((err)=>{
-                    cleanupCallback();
-                    console.log(err);
-                    res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print real error is unsafe
-                });
-        })
-        .catch((err)=>{
+    createStatus('clone', 0, 2, req.body.data)
+        .then((status)=> {
+            res.send({status: status});
+            //async execution
+            clone(currentWebsiteSection)
+            .then((data)=> {
+                dataGlobal = data;
+                return status.save({status:1});
+            }).then((data)=> {
+                var fileName = sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json';
+                return filePutContents(data.clonePath + '/data/' + fileName, status.get('data'))
+            }).then(()=>status.save({status:2}))
+            .then(()=>CommitAndPush(data.path, data.clonePath, 'data/'+fileName, currentWebsiteSection.get('name') + ' updated'))
+            .then(()=>status.save({status:3}))
+            .then((ret)=>{
+                var webhook = currentWebsiteSection.related('website').get('webhook');
+                if(webhook!='') {
+                    console.log("Calling webhook: " + webhook);
+                    return rp(webhook).then((data)=>{Promise.resolve(ret)});
+                }
+                return ret;
+            })
+            .then(()=>{
+                cleanupCallback();
+                return status.save({status:4, data:'{}', completed:true});
+            })
+            .catch((err)=>{
+                console.log(err);
+                cleanupCallback();
+                //TODO if for webhook errors
+                return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
+            });
+        }).catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are corrects (clone url, path and so on)' }); //print error is unsafe
+            return res.status(500).send({ msg: 'Error during cloning of the website section' }); //print real error is unsafe
         });
 };
 
