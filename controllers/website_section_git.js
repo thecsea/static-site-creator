@@ -60,12 +60,13 @@ exports.ensureMyStatus = function(req, res, next) {
 };
 
 /**
- * GET /websites/:id/sections/:id/git/status/:id
+ * GET /websites/:id/sections/:id/git/status/:id/get
  */
 exports.websiteSectionGitStatusGet = function(req, res) {
     currentStatus = currentStatus.toJSON();
-    if(req.user.get('editor'))
+    if(req.user.get('editor')) {
         delete currentStatus.section.website.editors;
+    }
     res.send({status: currentStatus});
 };
 
@@ -79,7 +80,7 @@ exports.websiteSectionGitGet = function(req, res) {
             //async execution
             clone(currentWebsiteSection)
             .then((data)=> {
-                return status.save({status:1}).then(()=>Promise.resolve(data));
+                return status.save({status:1}).then(()=>data);
             }).then((data)=> {
                 return fileGetContents(data.clonePath + '/data/' + sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json');
             }).then((text)=>{
@@ -91,7 +92,7 @@ exports.websiteSectionGitGet = function(req, res) {
                 //fileGetContents error
                 if(err.code == 'ENOENT') {
                     //TODO this can caused even by other problems not only no content
-                    return status.save({status:2, data:'', completed:true});
+                    return status.save({status:2, data:'{}', completed:true});
                 }else{
                     return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
                 }

@@ -3,7 +3,7 @@ angular.module('MyApp')
       var websiteId = $routeParams.websiteId;
       var id = $routeParams.id;
       $scope.section = {id: 0, name:'', path:'', template_id: 0, template:{}};
-      $scope.data = '';
+      $scope.status = {id: 0, status:'', data:''};
       $scope.html = '';
       $scope.loaded = false;
       $scope.uploading = false;
@@ -56,18 +56,47 @@ angular.module('MyApp')
       }
 
       function getData(){
+          var resolvePromise = function(){};
+          var rejectPromise = function(){};
+          var sectionPromise = new Promise(function(resolve, reject){resolvePromise = resolve; rejectPromise = reject;});
           return WebsiteSectionGit.clone(websiteId, id).then(function (response) {
-              try {
-                  $scope.data = JSON.parse(response.data.text);
-                  $scope.loaded = true;
-              }catch(e){
-                  console.error(e);
-                  $scope.messages = {
-                      error: [{msg:'Error during parsing JSON'}]
-                  };
-                  return ;
-              }
-
+              $scope.status = response.data.status;
+              var interval = null;
+              interval = $window.setInterval(function(){
+                  return WebsiteSectionGit.status(websiteId, id, $scope.status.id).then(function (response) {
+                      $scope.status = response.data.status;
+                      //err
+                      if ($scope.status.status == -1) {
+                          $scope.messages = {
+                              error: [{msg: 'Error during parsing JSON'}]
+                          };
+                          rejectPromise();
+                          $window.clearInterval(interval);
+                      }
+                      else if ($scope.status.completed) {
+                          try {
+                              $scope.status.data = JSON.parse(response.data.status.data);
+                              $scope.loaded = true;
+                              resolvePromise();
+                          } catch (e) {
+                              console.error(e);
+                              $scope.messages = {
+                                  error: [{msg: 'Error during parsing JSON'}]
+                              };
+                              rejectPromise();
+                          }
+                          $window.clearInterval(interval);
+                      }
+                  }).catch(function (response) {
+                      //TODO stop after 2/3 failures
+                      $scope.messages = {
+                          error: Array.isArray(response.data) ? response.data : [response.data]
+                      };
+                      rejectPromise();
+                      $window.clearInterval(interval);
+                  });
+              },250);
+              return sectionPromise;
           }).catch(function (response) {
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]

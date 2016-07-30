@@ -19,6 +19,7 @@ Creator of static sites for template managers (like pug ex-blade)
 - [ ] Multiple remote server support for the same repository (multiple push)
 - [ ] Tmp storage for data before pushing
 - [ ] Editors log and history (who has done what)
+- [ ] Git auto retry in case of failure 
 
 ## How to use
 
