@@ -12,7 +12,7 @@ angular.module('MyApp')
       $scope.updateTemplate = function (index) {
           $scope.currentTemplate = $scope.templates[index];
           try{
-              $scope.currentTemplate.structure = JSON.stringify($scope.currentTemplate.parsedStructure);
+              $scope.currentTemplate.structure = JSON.stringify($scope.currentTemplate.parsedStructure, null, 4);
           }catch(e){
               $scope.messages = {
                   error: [{msg:'Error during parsing JSON'}]
