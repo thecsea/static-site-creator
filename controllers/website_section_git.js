@@ -8,6 +8,7 @@ var tmp = require('tmp');
 var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
 var currentWebsiteSection = null;
+var currentStatus = null;
 var cleanupCallback = function(){};
 
 exports.ensureAuthenticated = function(req, res, next) {
@@ -34,6 +35,40 @@ exports.ensureAuthenticated = function(req, res, next) {
   }
 };
 
+exports.ensureMyStatus = function(req, res, next) {
+    if (req.isAuthenticated()) {
+        new GitStatus({id: req.params.id}).fetch({withRelated: ['section', 'section.website', 'section.website.user','section.website.editors']}).then((status)=>{
+            if(req.user.get('editor')){
+                if (pluck(status.related('section').related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
+                    currentStatus = status;
+                    next();
+                } else
+                    res.status(403).send({msg: 'Forbidden'});
+            }else {
+                if (status.related('section').related('website').get('user_id') == req.user.id) {
+                    currentStatus = status;
+                    next();
+                } else
+                    res.status(403).send({msg: 'Forbidden'});
+            }
+        }).catch(()=>{
+            res.status(404).send({ msg: 'Wrong status id' });
+        });
+    } else {
+        res.status(401).send({ msg: 'Unauthorized' });
+    }
+};
+
+/**
+ * GET /websites/:id/sections/:id/git/status/:id
+ */
+exports.websiteSectionGitStatusGet = function(req, res) {
+    currentStatus = currentStatus.toJSON();
+    if(req.user.get('editor'))
+        delete currentStatus.section.website.editors;
+    res.send({status: currentStatus});
+};
+
 /**
  * GET /websites/:id/sections/:id/git/clone
  */
@@ -55,6 +90,7 @@ exports.websiteSectionGitGet = function(req, res) {
                 cleanupCallback();
                 //fileGetContents error
                 if(err.code == 'ENOENT') {
+                    //TODO this can caused even by other problems not only no content
                     return status.save({status:'2', data:''});
                 }else{
                     return status.save({status:'-1', data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
