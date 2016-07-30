@@ -1,6 +1,7 @@
 var Website = require('../models/Website');
 var WebsiteSection = require('../models/WebsiteSection');
 var Template = require('../models/Template');
+var GitStatus = require('../models/GitStatus');
 var fs = require('fs');
 var Git = require('nodegit');
 var tmp = require('tmp');
@@ -37,19 +38,32 @@ exports.ensureAuthenticated = function(req, res, next) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    clone(currentWebsiteSection)
-        .then((data)=>{
-            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
-                .then((text)=>{cleanupCallback(); res.send({text: text});})
-                .catch((err)=>{
-                    cleanupCallback();
-                    //TODO check the type of the error
-                    res.send({text: '{}'});
-                });
-        })
-        .catch((err)=>{
+    createStatus('clone', '0')
+        .then((status)=>{
+            res.send({status: status});
+            //async execution
+            clone(currentWebsiteSection)
+            .then((data)=> {
+                return status.save({status:'1'}).then(()=>Promise.resolve(data));
+            }).then((data)=> {
+                return fileGetContents(data.clonePath + '/data/' + sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json');
+            }).then((text)=>{
+                cleanupCallback();
+                return status.save({status:'2', data:text});
+            }).catch((err)=>{
+                console.log(err);
+                cleanupCallback();
+                //fileGetContents error
+                if(err.code == 'ENOENT') {
+                    return status.save({status:'2', data:''});
+                }else{
+                    return status.save({status:'-1', data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
+                }
+
+            });
+        }).catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are correct (clone url, path and so on)' }); //print real error is unsafe
+            return res.status(500).send({ msg: 'Error during cloning of the website section' }); //print real error is unsafe
         });
 };
 
@@ -233,4 +247,10 @@ function fileGetContents(file){
 
 function pluck(data, key){
     return data.map((value)=>{return value[key];});
+}
+
+function createStatus(type, status, data){
+    if(data === undefined || data === null)
+        data = '';
+    return currentWebsiteSection.gitStatus().create({type: type, status: status});
 }
