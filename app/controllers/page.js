@@ -33,6 +33,10 @@ angular.module('MyApp')
               };
               return ;
           }
+          if($scope.messages != null && $scope.messages != undefined) {
+              delete $scope.messages.success;
+              delete $scope.messages.error;
+          }
           var resolvePromise = function(){};
           var rejectPromise = function(){};
           var sectionPromise = new Promise(function(resolve, reject){resolvePromise = resolve; rejectPromise = reject;});
