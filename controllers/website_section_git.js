@@ -75,7 +75,7 @@ exports.websiteSectionGitPut = function(req, res) {
                     var webhook = currentWebsiteSection.related('website').get('webhook');
                     if(webhook!='') {
                         console.log("Calling webhook: " + webhook);
-                        return rp(webhook).then((data)=>{console.log(data); Promise.resolve(ret)});
+                        return rp(webhook).then((data)=>{Promise.resolve(ret)});
                     }
                     return ret;
                 })
