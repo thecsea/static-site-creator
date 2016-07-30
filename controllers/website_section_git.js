@@ -1,12 +1,12 @@
 var Website = require('../models/Website');
 var WebsiteSection = require('../models/WebsiteSection');
 var Template = require('../models/Template');
+var GitStatus = require('../models/GitStatus');
 var fs = require('fs');
 var Git = require('nodegit');
 var tmp = require('tmp');
 var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
-var cleanupCallback = function(){};
 
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
@@ -32,23 +32,74 @@ exports.ensureAuthenticated = function(req, res, next) {
   }
 };
 
+exports.ensureMyStatus = function(req, res, next) {
+    if (req.isAuthenticated()) {
+        new GitStatus({id: req.params.id}).fetch({withRelated: ['section', 'section.website', 'section.website.user','section.website.editors']}).then((status)=>{
+            if(req.user.get('editor')){
+                if (pluck(status.related('section').related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
+                    req.currentStatus = status;
+                    next();
+                } else
+                    res.status(403).send({msg: 'Forbidden'});
+            }else {
+                if (status.related('section').related('website').get('user_id') == req.user.id) {
+                    req.currentStatus = status;
+                    next();
+                } else
+                    res.status(403).send({msg: 'Forbidden'});
+            }
+        }).catch(()=>{
+            res.status(404).send({ msg: 'Wrong status id' });
+        });
+    } else {
+        res.status(401).send({ msg: 'Unauthorized' });
+    }
+};
+
+/**
+ * GET /websites/:id/sections/:id/git/status/:id/get
+ */
+exports.websiteSectionGitStatusGet = function(req, res) {
+    var currentStatus = req.currentStatus.toJSON();
+    if(req.user.get('editor')) {
+        delete currentStatus.section.website.editors;
+    }
+    res.send({status: currentStatus});
+};
+
 /**
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    clone(req.currentWebsiteSection)
-        .then((data)=>{
-            fileGetContents(data.clonePath +'/data/'+sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json')
-                .then((text)=>{cleanupCallback(); res.send({text: text});})
-                .catch((err)=>{
-                    cleanupCallback();
-                    //TODO check the type of the error
-                    res.send({text: '{}'});
-                });
-        })
-        .catch((err)=>{
+    var parentData =  {};
+    parentData.cleanupCallback = function(){};
+    parentData.cleanupCallback();
+    createStatus(req.currentWebsiteSection, 'clone', 0, 2, 'Cloning data')
+        .then((status)=>{
+            res.send({status: status});
+            //async execution
+            clone(req.currentWebsiteSection, parentData)
+            .then((data)=> {
+                return status.save({status:1, status_description:'Reading data'}).then(()=>data);
+            }).then((data)=> {
+                return fileGetContents(data.clonePath + '/data/' + sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json');
+            }).then((text)=>{
+                parentData.cleanupCallback();
+                return status.save({status:2, data:text, completed:true, status_description:'Done'});
+            }).catch((err)=>{
+                console.log(err);
+                parentData.cleanupCallback();
+                //fileGetContents error
+                if(err.code == 'ENOENT') {
+                    //TODO this can caused even by other problems not only no content
+                    return status.save({status:2, data:'{}', completed:true, status_description:'Done'});
+                }else{
+                    return status.save({error:true, status_description:'Error during cloning, please check if all data are corrects (clone url, path and so on)', completed:true});
+                }
+            });
+        }).catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are correct (clone url, path and so on)' }); //print real error is unsafe
+            return res.status(500).send({ msg: 'Error during cloning of the website section' }); //print real error is unsafe
         });
 };
 
@@ -57,52 +108,64 @@ exports.websiteSectionGitGet = function(req, res) {
  * PUT /websites/:id/sections/:id/git
  */
 exports.websiteSectionGitPut = function(req, res) {
-    req.assert('text', 'Text cannot be blank').notEmpty(); //TODO not exists better
+    req.assert('data', 'Data cannot be blank').notEmpty(); //TODO not exists better
 
     var errors = req.validationErrors();
 
     if (errors) {
         return res.status(422).send(errors);
     }
+    var dataGlobal = null;
+    var fileName = sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json';
+    var parentData =  {};
+    parentData.cleanupCallback = function(){};
+    parentData.cleanupCallback();
 
-    clone(req.currentWebsiteSection)
-        .then((data)=>{
-            var fileName = sanitizeFilename(req.currentWebsiteSection.get('path').replace(/\//gi,'_'))+'.json';
-            filePutContents(data.clonePath +'/data/'+fileName, req.body.text)
-                .then(()=>{return CommitAndPush(data.path, data.clonePath, 'data/'+fileName, req.currentWebsiteSection.get('name') + ' updated')})
-                .then((ret)=>{
-                    var webhook = req.currentWebsiteSection.related('website').get('webhook');
-                    if(webhook!='') {
-                        console.log("Calling webhook: " + webhook);
-                        return rp(webhook).then((data)=>{Promise.resolve(ret)});
-                    }
-                    return ret;
-                })
-                .then((ret)=>{
-                    cleanupCallback();
-                    res.send({text: req.body.text});
-                    return ret;
-                })
-                .catch((err)=>{
-                    cleanupCallback();
-                    console.log(err);
-                    res.status(422).send({ msg: 'Error during pushing, please check to have the right git permissions)' }); //print real error is unsafe
-                });
-        })
-        .catch((err)=>{
+    createStatus(req.currentWebsiteSection, 'push', 0, 4, 'Cloning data', req.body.data)
+        .then((status)=> {
+            res.send({status: status});
+            //async execution
+            clone(req.currentWebsiteSection, parentData)
+            .then((data)=> {
+                dataGlobal = data;
+                return status.save({status:1, status_description:'Writing content in tmp file'});
+            }).then((data)=> {
+                return filePutContents(dataGlobal.clonePath + '/data/' + fileName, status.get('data'))
+            }).then(()=>status.save({status:2, status_description:'Pushing data'}))
+            .then(()=>CommitAndPush(dataGlobal.path, dataGlobal.clonePath, 'data/'+fileName, req.currentWebsiteSection.get('name') + ' updated'))
+            .then(()=>status.save({status:3, status_description:'Calling webhook'}))
+            .then((ret)=>{
+                var webhook = req.currentWebsiteSection.related('website').get('webhook');
+                if(webhook!=null && webhook != undefined && webhook!='') {
+                    console.log("Calling webhook: " + webhook);
+                    return rp(webhook).then((data)=>{Promise.resolve(ret)});
+                }
+                return ret;
+            })
+            .then(()=>{
+                parentData.cleanupCallback();
+                return status.save({status:4, data:'{}', completed:true, status_description:'Done'});
+            })
+            .catch((err)=>{
+                console.log(err);
+                parentData.cleanupCallback();
+                //TODO if for webhook errors saying that data are pushed but the webhook was nto called
+                return status.save({error:true, status_description:'Error during cloning, please check if all data are corrects (clone url, path and so on)', completed:true});
+            });
+        }).catch((err)=>{
             console.log(err);
-            res.status(422).send({ msg: 'Error during cloning, please check if all data are corrects (clone url, path and so on)' }); //print error is unsafe
+            return res.status(500).send({ msg: 'Error during cloning of the website section' }); //print real error is unsafe
         });
 };
 
 //TODO create a class to manage everything
-function clone(section){
+function clone(section, parentData){
     var sshKeys = section.related('website').related('user').related('sshKeys').fetch();
     var dir = createDirectory();
     return Promise.all([sshKeys, dir]).then((values)=>{
         var ssh = values[0];
         var path = values[1].path;
-        cleanupCallback = values[1].cleanupCallback;
+        parentData.cleanupCallback = values[1].cleanupCallback;
 
         var url = section.related('website').get('git_url');
         ssh = ssh.pop();//TODO improve this, multiple ssh kesy case
@@ -232,4 +295,10 @@ function fileGetContents(file){
 
 function pluck(data, key){
     return data.map((value)=>{return value[key];});
+}
+
+function createStatus(currentWebsiteSection, type, status, total_status, status_description, data){
+    if(data === undefined || data === null)
+        data = '';
+    return currentWebsiteSection.gitStatus().create({type: type, status: status, total_status: total_status, completed:false, error:false, status_description: status_description,data:data});
 }

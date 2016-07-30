@@ -103,6 +103,7 @@ app.delete('/websites/:websiteId/sections/:id', websiteSectionController.ensureA
 //git operations
 app.get('/websites/:websiteId/sections/:id/git/clone', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitGet);
 app.put('/websites/:websiteId/sections/:id/git/push', websiteSectionGitController.ensureAuthenticated, websiteSectionGitController.websiteSectionGitPut);
+app.get('/websites/:websiteId/sections/:idSection/git/status/:id/get', websiteSectionGitController.ensureMyStatus, websiteSectionGitController.websiteSectionGitStatusGet);
 
 //editors
 app.get('/editors/all', editorController.ensureAuthenticated, editorController.editorsGet);

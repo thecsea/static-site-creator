@@ -3,7 +3,8 @@ angular.module('MyApp')
       var websiteId = $routeParams.websiteId;
       var id = $routeParams.id;
       $scope.section = {id: 0, name:'', path:'', template_id: 0, template:{}};
-      $scope.data = '';
+      $scope.status = {id: 0, status:'', data:'', total_status:0, status_description:''};
+      $scope.statusPush = {id: 0, status:'', data:'', total_status:0, status_description:''};
       $scope.html = '';
       $scope.loaded = false;
       $scope.uploading = false;
@@ -23,7 +24,7 @@ angular.module('MyApp')
               return;
           $scope.uploading = true;
           try {
-              var text = JSON.stringify($scope.data, null, 4);
+              var text = JSON.stringify($scope.status.data, null, 4);
           }catch(e)
           {
               console.error(e);
@@ -32,12 +33,48 @@ angular.module('MyApp')
               };
               return ;
           }
-          WebsiteSectionGit.push(websiteId, id, {text:text}).then(function (response) {
-              $scope.uploading = false;
-              $scope.messages = {
-                  success: [{msg:'Contents saved'}]
-              };
+          var resolvePromise = function(){};
+          var rejectPromise = function(){};
+          var sectionPromise = new Promise(function(resolve, reject){resolvePromise = resolve; rejectPromise = reject;});
+          var inside = false;
+          return WebsiteSectionGit.push(websiteId, id, {data:text}).then(function (response) {
+              $scope.statusPush = response.data.status;
+              var interval = null;
+              inside = true;
+              interval = $window.setInterval(function(){
+                  return WebsiteSectionGit.status(websiteId, id, $scope.statusPush.id).then(function (response) {
+                      $scope.statusPush = response.data.status;
+                      //err
+                      if ($scope.statusPush.error) {
+                          $scope.messages = {
+                              error: [{msg: $scope.statusPush.status_description}]
+                          };
+                          $scope.uploading = false;
+                          rejectPromise();
+                          $window.clearInterval(interval);
+                      }
+                      else if ($scope.statusPush.completed) {
+                          $scope.uploading = false;
+                          $scope.messages = {
+                              success: [{msg:'Contents saved'}]
+                          };
+                          resolvePromise();
+                          $window.clearInterval(interval);
+                      }
+                  }).catch(function (response) {
+                      //TODO stop after 2/3 failures
+                      $scope.uploading = false;
+                      $scope.messages = {
+                          error: Array.isArray(response.data) ? response.data : [response.data]
+                      };
+                      rejectPromise();
+                      $window.clearInterval(interval);
+                  });
+              },250);
+              return sectionPromise;
           }).catch(function (response) {
+              if(inside)
+                  return;
               $scope.uploading = false;
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
@@ -56,19 +93,56 @@ angular.module('MyApp')
       }
 
       function getData(){
+          var resolvePromise = function(){};
+          var rejectPromise = function(){};
+          var sectionPromise = new Promise(function(resolve, reject){resolvePromise = resolve; rejectPromise = reject;});
+          var inside = false;
           return WebsiteSectionGit.clone(websiteId, id).then(function (response) {
-              try {
-                  $scope.data = JSON.parse(response.data.text);
-                  $scope.loaded = true;
-              }catch(e){
-                  console.error(e);
-                  $scope.messages = {
-                      error: [{msg:'Error during parsing JSON'}]
-                  };
-                  return ;
-              }
-
+              $scope.status = response.data.status;
+              var interval = null;
+              inside = true;
+              interval = $window.setInterval(function(){
+                  return WebsiteSectionGit.status(websiteId, id, $scope.status.id).then(function (response) {
+                      $scope.status = response.data.status;
+                      //err
+                      if ($scope.status.error) {
+                          $scope.messages = {
+                              error: [{msg: $scope.status.status_description}]
+                          };
+                          $scope.loaded = true;
+                          rejectPromise();
+                          $window.clearInterval(interval);
+                      }
+                      else if ($scope.status.completed) {
+                          try {
+                              $scope.status.data = JSON.parse($scope.status.data);
+                              $scope.loaded = true;
+                              resolvePromise();
+                          } catch (e) {
+                              console.error(e);
+                              $scope.loaded = true;
+                              $scope.messages = {
+                                  error: [{msg: 'Error during parsing JSON'}]
+                              };
+                              rejectPromise();
+                          }
+                          $window.clearInterval(interval);
+                      }
+                  }).catch(function (response) {
+                      //TODO stop after 2/3 failures
+                      $scope.loaded = true;
+                      $scope.messages = {
+                          error: Array.isArray(response.data) ? response.data : [response.data]
+                      };
+                      rejectPromise();
+                      $window.clearInterval(interval);
+                  });
+              },250);
+              return sectionPromise;
           }).catch(function (response) {
+              if(inside)
+                  return;
+              $scope.loaded = true;
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
