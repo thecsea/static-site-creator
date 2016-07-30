@@ -94,7 +94,7 @@ exports.websitesPost = function(req, res) {
     res.send({ website: website.toJSON() });
   })
   .catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
       console.log(err);
@@ -138,7 +138,7 @@ exports.websitesPut = function(req, res) {
   }).catch(function(err) {
     if (err.code === 'EDITOR_NOT_MINE') {
       return res.status(422).send({ msg: 'At least one editor is not yours' });
-    }else if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    }else if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
     }else {
       console.log(err);

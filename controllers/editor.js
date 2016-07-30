@@ -65,7 +65,7 @@ exports.editorsPost = function(req, res) {
   }).then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The email address you have entered is already associated with another account.' });
     }else {
       console.log(err);
@@ -106,7 +106,7 @@ exports.editorsPut = function(req, res) {
   currentEditor.save(obj, { patch: true }).then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The email address you have entered is already associated with another account.' });
     }else {
       console.log(err);

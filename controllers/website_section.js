@@ -108,7 +108,7 @@ exports.websiteSectionsPost = function(req, res) {
     }).then(function(section) {
       res.send({ websiteSection: section.toJSON() });
     }).catch(function(err) {
-      if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+      if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
         return res.status(422).send({ msg: 'A section with the same path for this website was already used' }); //path + website unique
       }else {
         console.log(err);
@@ -145,7 +145,7 @@ exports.websiteSectionsPut = function(req, res) {
     }).then(function(section) {
       res.send({ websiteSection: section.toJSON() });
     }).catch(function(err) {
-      if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+      if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
         return res.status(422).send({ msg: 'A section with the same path for this website was already used' }); //path + website unique
       }else {
         console.log(err);
