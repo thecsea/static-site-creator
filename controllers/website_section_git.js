@@ -73,27 +73,27 @@ exports.websiteSectionGitStatusGet = function(req, res) {
  * GET /websites/:id/sections/:id/git/clone
  */
 exports.websiteSectionGitGet = function(req, res) {
-    createStatus('clone', '0')
+    createStatus('clone', 0, 2)
         .then((status)=>{
             res.send({status: status});
             //async execution
             clone(currentWebsiteSection)
             .then((data)=> {
-                return status.save({status:'1'}).then(()=>Promise.resolve(data));
+                return status.save({status:1}).then(()=>Promise.resolve(data));
             }).then((data)=> {
                 return fileGetContents(data.clonePath + '/data/' + sanitizeFilename(currentWebsiteSection.get('path').replace(/\//gi, '_')) + '.json');
             }).then((text)=>{
                 cleanupCallback();
-                return status.save({status:'2', data:text});
+                return status.save({status:2, data:text, completed:true});
             }).catch((err)=>{
                 console.log(err);
                 cleanupCallback();
                 //fileGetContents error
                 if(err.code == 'ENOENT') {
                     //TODO this can caused even by other problems not only no content
-                    return status.save({status:'2', data:''});
+                    return status.save({status:2, data:'', completed:true});
                 }else{
-                    return status.save({status:'-1', data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
+                    return status.save({status:-1, data:'Error during cloning, please check if all data are corrects (clone url, path and so on)'});
                 }
 
             });
@@ -285,8 +285,8 @@ function pluck(data, key){
     return data.map((value)=>{return value[key];});
 }
 
-function createStatus(type, status, data){
+function createStatus(type, status, total_status, data){
     if(data === undefined || data === null)
         data = '';
-    return currentWebsiteSection.gitStatus().create({type: type, status: status});
+    return currentWebsiteSection.gitStatus().create({type: type, status: status, total_status: total_status, completed:false});
 }

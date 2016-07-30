@@ -6,8 +6,10 @@ exports.up = function(knex, Promise) {
             table.integer('section_id').unsigned().index().references('id').inTable('website_sections').onDelete('cascade')
                 .onUpdate('cascade');
             table.enum('type', ['push', 'clone']);
-            table.string('status');
+            table.integer('status');
+            table.integer('total_status');
             table.text('data');
+            table.boolean('completed');
             table.timestamps();
         })
     ]);
