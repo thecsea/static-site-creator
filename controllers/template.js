@@ -1,6 +1,5 @@
 var User = require('../models/User');
 var Template = require('../models/Template');
-var currentTemplate = null;
 
 /**
  * Login required middleware
@@ -17,7 +16,7 @@ exports.ensureMine = function(req, res, next) {
   if (req.isAuthenticated() && !req.user.get('editor')) {
     new Template({id: req.params.id}).fetch().then((template)=>{
       if(template.get('user_id') == req.user.id) {
-        currentTemplate = template;
+        req.currentTemplate = template;
         next();
       }else
         res.status(403).send({ msg: 'Forbidden' });
@@ -78,7 +77,7 @@ exports.templatesPut = function(req, res) {
     return res.status(422).send(errors);
   }
 
-  currentTemplate.save({
+  req.currentTemplate.save({
     name: req.body.name,
     parsedStructure: req.body.parsedStructure
   }).then(function(template) {
@@ -94,7 +93,7 @@ exports.templatesPut = function(req, res) {
  * DELETE /templates
  */
 exports.templatesDelete = function(req, res) {
-  currentTemplate.destroy().then(function(template) {
+  req.currentTemplate.destroy().then(function(template) {
     res.send({ template: {} });
   }).catch(function(err) {
     console.log(err);

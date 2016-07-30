@@ -7,8 +7,6 @@ var Git = require('nodegit');
 var tmp = require('tmp');
 var rp = require('request-promise');
 var sanitizeFilename = require("sanitize-filename");
-var currentWebsiteSection = null;
-var currentStatus = null;
 var cleanupCallback = function(){};
 
 exports.ensureAuthenticated = function(req, res, next) {
@@ -16,13 +14,13 @@ exports.ensureAuthenticated = function(req, res, next) {
     new WebsiteSection({id: req.params.id}).fetch({withRelated: ['website', 'website.user','website.editors']}).then((section)=>{
       if(req.user.get('editor')){
         if (pluck(section.related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
-           currentWebsiteSection = section;
+            req.currentWebsiteSection = section;
            next();
         } else
            res.status(403).send({msg: 'Forbidden'});
       }else {
         if (section.related('website').get('user_id') == req.user.id) {
-           currentWebsiteSection = section;
+            req.currentWebsiteSection = section;
            next();
         } else
            res.status(403).send({msg: 'Forbidden'});
@@ -40,13 +38,13 @@ exports.ensureMyStatus = function(req, res, next) {
         new GitStatus({id: req.params.id}).fetch({withRelated: ['section', 'section.website', 'section.website.user','section.website.editors']}).then((status)=>{
             if(req.user.get('editor')){
                 if (pluck(status.related('section').related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
-                    currentStatus = status;
+                    req.currentStatus = status;
                     next();
                 } else
                     res.status(403).send({msg: 'Forbidden'});
             }else {
                 if (status.related('section').related('website').get('user_id') == req.user.id) {
-                    currentStatus = status;
+                    req.currentStatus = status;
                     next();
                 } else
                     res.status(403).send({msg: 'Forbidden'});
@@ -63,7 +61,7 @@ exports.ensureMyStatus = function(req, res, next) {
  * GET /websites/:id/sections/:id/git/status/:id/get
  */
 exports.websiteSectionGitStatusGet = function(req, res) {
-    currentStatus = currentStatus.toJSON();
+    var currentStatus = req.currentStatus.toJSON();
     if(req.user.get('editor')) {
         delete currentStatus.section.website.editors;
     }

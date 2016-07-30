@@ -85,7 +85,7 @@ exports.signupPost = function(req, res, next) {
     res.send({ token: generateToken(user), user: user });
     })
     .catch(function(err) {
-      if (err.code === 'ER_DUP_ENTRY') {
+      if (err.code === 'ER_DUP_ENTRY' || err.code == '23505') {
     return res.status(400).send({ msg: 'The email address you have entered is already associated with another account.' });
       }
     });
@@ -132,7 +132,7 @@ exports.accountPut = function(req, res, next) {
     }
     res.redirect('/account');
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY') {
+    if (err.code === 'ER_DUP_ENTRY' || err.code == '23505') {
       res.status(409).send({ msg: 'The email address you have entered is already associated with another account.' });
     }
   });

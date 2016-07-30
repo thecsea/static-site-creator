@@ -1,5 +1,4 @@
 var User = require('../models/User');
-var currentEditor = null;
 
 /**
  * Login required middleware
@@ -16,7 +15,7 @@ exports.ensureMine = function(req, res, next) {
   if (req.isAuthenticated() && !req.user.get('editor')) {
     new User({id: req.params.id}).fetch().then((editor)=>{
       if(editor.get('parent_id') == req.user.id) {
-        currentEditor = editor;
+        req.currentEditor = editor;
         next();
       }else
         res.status(403).send({ msg: 'Forbidden' });
@@ -65,7 +64,7 @@ exports.editorsPost = function(req, res) {
   }).then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The email address you have entered is already associated with another account.' });
     }else {
       console.log(err);
@@ -103,10 +102,10 @@ exports.editorsPut = function(req, res) {
     obj.password = req.body.password;
   }
 
-  currentEditor.save(obj, { patch: true }).then(function(editor) {
+  req.currentEditor.save(obj, { patch: true }).then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT') {
+    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The email address you have entered is already associated with another account.' });
     }else {
       console.log(err);
@@ -120,7 +119,7 @@ exports.editorsPut = function(req, res) {
  * DELETE /editors
  */
 exports.editorsDelete = function(req, res) {
-  currentEditor.destroy().then(function(editor) {
+  req.currentEditor.destroy().then(function(editor) {
     res.send({ editor: editor.toJSON() });
   }).catch(function(err) {
     console.log(err);
