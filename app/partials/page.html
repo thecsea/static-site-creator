@@ -9,7 +9,6 @@
       </div>
       <div class="form-horizontal">
         <legend>{{section.name}} of {{section.website.name}}</legend>
-        {{status}}
         <span ng-show="!loaded">Loading... phase {{status.status}} of {{status.total_status}}... {{status.status_description}} </span>
         <span ng-show="uploading">Saving... phase {{statusPush.status}} of {{statusPush.total_status}}...{{statusPush.status_description}}</span>
         <compile-html ng-model="html"></compile-html>
