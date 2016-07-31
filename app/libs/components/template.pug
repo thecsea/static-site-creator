@@ -17,37 +17,57 @@ mixin array(name, value, root, level)
     - tag = "h"+ (level+1)
     if name == ''
         - root = root.slice(0,-1)
-    #{tag} Array of data #{name}
     - val = value[0]
     //TODO do some checks
     if val instanceof Array
         - addValue = "[]"
     else if typeof (val) == 'object'
         - addValue = "{}"
-    button(ng-click=root + name+".push("+addValue+")") Add element
-    div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
-        if val instanceof Array
-            +array('', val, root+name+'[key'+level+'].', level+1) //TODO do a better name
-        else if typeof (val) == 'object'
-            +object('', val,root+name+'[key'+level+'].', level+1)
-        button(ng-click=root + name+".remove(key"+level+")") Remove
+    div(class=panel(level))
+        .panel-heading
+            #{tag} Array of data #{name}
+        .panel-body
+            button(ng-click=root + name+".push("+addValue+")") Add element
+            div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
+                if val instanceof Array
+                    +array('', val, root+name+'[key'+level+'].', level+1) //TODO do a better name
+                else if typeof (val) == 'object'
+                    +object('', val,root+name+'[key'+level+'].', level+1)
+                button(ng-click=root + name+".remove(key"+level+")") Remove
 
 
 mixin object(name, obj, root, level)
     - tag = "h"+ (level+1)
-    if name != ''
-        #{tag} #{name}
-    each val, index in obj
-        if val instanceof Array
-            +array(index, val, root, level+1)
-        else if typeof (val) == 'object'
-            +object(index, val, root+index+'.', level+1)
-        else if val == "text"
-            +text(index, root)
-        else if val == "youtube"
-            +youtube(index, root)
-        else if val == "img"
-            +img(index, root)
+    .panel-group
+        div(class=panel(level))
+            if name != ''
+                .panel-heading
+                    #{tag} #{name}
+            .panel-body
+                each val, index in obj
+                    if val instanceof Array
+                        +array(index, val, root, level+1)
+                    else if typeof (val) == 'object'
+                        +object(index, val, root+index+'.', level+1)
+                    else if val == "text"
+                        +text(index, root)
+                    else if val == "youtube"
+                        +youtube(index, root)
+                    else if val == "img"
+                        +img(index, root)
+- function panel(level){
+-     if(level == 0){
+-         return "panel-primary panel";
+-     }else if(level == 1){
+-         return "panel-success panel";
+-     }else if(level == 2){
+-         return "panel-info panel";
+-     }else if(level == 3){
+-         return "panel-warning.panel panel";
+-     }else{
+-         return "panel-default panel";
+-     }
+- }
 
 
 +object('Main Data', structure, 'status.data.', 0)
