@@ -24,7 +24,8 @@ angular.module('MyApp')
               return;
           $scope.uploading = true;
           try {
-              var text = JSON.stringify($scope.status.data, null, 4);
+              //var text = JSON.stringify($scope.status.data.toJSON(), null, 4);
+              var text = angular.toJson($scope.status.data, true);
           }catch(e)
           {
               console.error(e);
