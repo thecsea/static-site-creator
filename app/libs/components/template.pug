@@ -13,7 +13,7 @@ mixin img(name, root)
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
 
-mixin array(name, value, root, level, remove)
+mixin array(name, nameShown, value, root, level, remove, unique)
     - tag = "h"+ (level+1)
     if name == ''
         - root = root.slice(0,-1)
@@ -25,43 +25,46 @@ mixin array(name, value, root, level, remove)
         - addValue = "{}"
     div(class=panel(level))
         .panel-heading
-            #{tag} Array of data #{name}
-        .panel-body
-            button(ng-click=root + name+".push("+addValue+")") Add element
-            div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
-                if val instanceof Array
-                    if(val.title == "text" )
-                        +array('{{' + root + name + '[key' + level + '].title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")")
-                    else
-                        +array('', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")")
-                else if typeof (val) == 'object'
-                    if(val.title == "text" )
-                        +object('{{'+root + name+'[key'+level+'].title}}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")")
-                    else
-                        +object('', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")")
-            if remove != ''
-                button(ng-click=remove) Remove
+            #{tag}.panel-title
+                a(data-toggle="collapse" href="#" data-target="#"+unique) Array of data #{nameShown}
+        .panel-collapse.collapse(id=unique)
+            .panel-body
+                button(ng-click=root + name+".push("+addValue+")") Add element
+                div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
+                    if val instanceof Array
+                        if(val.title == "text" )
+                            +array('', '{{' + root + name + '[key' + level + '].title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                        else
+                            +array('', '', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                    else if typeof (val) == 'object'
+                        if(val.title == "text" )
+                            +object('{{'+root + name+'[key'+level+'].title}}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                        else
+                            +object('', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                if remove != ''
+                    button(ng-click=remove) Remove
 
-mixin object(name, obj, root, level, remove)
+mixin object(name, obj, root, level, remove, unique)
     - tag = "h"+ (level+1)
     div(class=panel(level))
-        if name != ''
-            .panel-heading
-                #{tag} #{name}
-        .panel-body
-            each val, index in obj
-                if val instanceof Array
-                    +array(index, val, root, level+1, '')
-                else if typeof (val) == 'object'
-                    +object(index, val, root+index+'.', level+1, '')
-                else if val == "text"
-                    +text(index, root)
-                else if val == "youtube"
-                    +youtube(index, root)
-                else if val == "img"
-                    +img(index, root)
-            if remove != ''
-                button(ng-click=remove) Remove
+        .panel-heading
+            #{tag}.panel-title
+                a(data-toggle="collapse" href="#" data-target="#"+unique) #{name}
+        .panel-collapse.collapse(id=unique)
+            .panel-body
+                each val, index in obj
+                    if val instanceof Array
+                        +array(index, index, val, root, level+1, '',unique+index)
+                    else if typeof (val) == 'object'
+                        +object(index, val, root+index+'.', level+1, '',unique+index)
+                    else if val == "text"
+                        +text(index, root)
+                    else if val == "youtube"
+                        +youtube(index, root)
+                    else if val == "img"
+                        +img(index, root)
+                if remove != ''
+                    button(ng-click=remove) Remove
 
 - function panel(level){
 -     if(level == 0){
@@ -71,7 +74,7 @@ mixin object(name, obj, root, level, remove)
 -     }else if(level == 2){
 -         return "panel-info panel";
 -     }else if(level == 3){
--         return "panel-warning.panel panel";
+-         return "panel-warning panel";
 -     }else{
 -         return "panel-default panel";
 -     }
@@ -79,7 +82,7 @@ mixin object(name, obj, root, level, remove)
 
 
 .panel-group
-    +object('Main Data', structure, 'status.data.', 0, '')
+    +object('Main Data', structure, 'status.data.', 0, '','main')
 
 script(type='text/javascript').
     Array.prototype.remove = function (from, to) {
