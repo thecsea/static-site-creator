@@ -22,7 +22,15 @@ mixin array(name, nameShown, value, root, level, remove, unique)
     if val instanceof Array
         - addValue = "[]"
     else if typeof (val) == 'object'
-        - addValue = "{}"
+        - addValue = []
+        each val2, index2 in val
+            if(val2 instanceof Array)
+                - addValue.push(index2+':[]')
+            else if(typeof(val2) == 'object')
+                - addValue.push(index2+':{}')
+            else
+                - addValue.push(index2+':\'\'')
+        - addValue = "{"+addValue+"}"
     div(class=panel(level))
         .panel-heading
             #{tag}.panel-title
