@@ -102,4 +102,10 @@ angular.module('MyApp', ['ngRoute', 'satellizer', 'naif.base64', 'checklist-mode
     return function(input) {
         return JSON.stringify(input)
     };
-});
+  }).filter('title', function () {
+    return function (input) {
+      if(input != undefined && input != null && input != '')
+        return input;
+      return 'Title';
+  };
+});;

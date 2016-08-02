@@ -33,12 +33,12 @@ mixin array(name, nameShown, value, root, level, remove, unique)
                 div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
                     if val instanceof Array
                         if(val.title == "text" )
-                            +array('', '{{' + root + name + '[key' + level + '].title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                            +array('', '{{' + root + name + '[key' + level + '].title | title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                         else
                             +array('', '', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                     else if typeof (val) == 'object'
                         if(val.title == "text" )
-                            +object('{{'+root + name+'[key'+level+'].title}}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                            +object('{{'+root + name+'[key'+level+'].title | title }}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                         else
                             +object('', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                 if remove != ''
