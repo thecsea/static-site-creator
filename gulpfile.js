@@ -17,7 +17,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
 gulp.task('sass', function() {
-  return gulp.src('public/css/main.scss')
+  return gulp.src('public/css/app.sass')
     .pipe(plumber())
     .pipe(sass())
     .pipe(autoprefixer())

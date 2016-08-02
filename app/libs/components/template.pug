@@ -1,12 +1,15 @@
 mixin text(name, root)
-    p #{name}
+    .app-template
+        h5 #{name}
         textarea(type="text" name=name ng-model=root+name)
 
 mixin youtube(name, root)
-    p #{name} (youtube url)
+    .app-youtube
+        h5 #{name} (youtube url)
         input(type="url" name=name ng-model=root+name)
 
 mixin img(name, root)
+    .app-img
     p IMG #{name}
         img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png")
         //TODO img error
