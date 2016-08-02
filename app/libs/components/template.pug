@@ -1,14 +1,23 @@
 
 mixin text(name, root, unique)
-    p #{name}
+    .app-textarea
+        label(for=unique)
+            i.material-icons title
+            | #{name}
         textarea(type="text" name=name ng-model=root+name id=unique)
 
 mixin youtube(name, root, unique)
-    p #{name} (youtube url)
+    .app-youtube
+        label(for=unique)
+            i.material-icons movie
+            #{name}
         input(type="url" name=name ng-model=root+name id=unique)
 
 mixin img(name, root, unique)
-    p IMG #{name}
+    .app-img
+        h5
+            i.material-icons image
+            | #{name}
         img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png" id=unique)
         //TODO img error
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)

@@ -77,7 +77,7 @@ gulp.task('libs', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('public/css/**/*.scss', ['sass']);
+  gulp.watch('public/css/**/*.sass', ['sass']);
   gulp.watch('app/partials/**/*.html', ['templates']);
   gulp.watch('app/**/*.js',  ['angular']);
   gulp.watch('app/libs/**/*',  ['libs']);
