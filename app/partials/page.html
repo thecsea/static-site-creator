@@ -8,6 +8,7 @@
         <div ng-repeat="success in messages.success">{{success.msg}}</div>
       </div>
       <div class="form-horizontal">
+        {{status.data}}
         <legend>{{section.name}} of {{section.website.name}}</legend>
         <span ng-show="!loaded">Loading... phase {{status.status}} of {{status.total_status}}... {{status.status_description}} </span>
         <span ng-show="uploading">Saving... phase {{statusPush.status}} of {{statusPush.total_status}}...{{statusPush.status_description}}</span>

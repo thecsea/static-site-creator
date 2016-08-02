@@ -43,12 +43,12 @@ mixin array(name, nameShown, value, root, level, remove, unique)
                         if(val.title == "text" )
                             +array('', '{{' + root + name + '[key' + level + '].title | title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                         else
-                            +array('', '', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                            +array('', 'Section', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')//TODO a better name
                     else if typeof (val) == 'object'
                         if(val.title == "text" )
                             +object('{{'+root + name+'[key'+level+'].title | title }}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
                         else
-                            +object('', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')
+                            +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-')//TODO a better name
                 if remove != ''
                     button(ng-click=remove) Remove
 
