@@ -1,14 +1,14 @@
-mixin text(name, root)
+mixin text(name, root, unique)
     p #{name}
-        textarea(type="text" name=name ng-model=root+name)
+        textarea(type="text" name=name ng-model=root+name id=unique)
 
-mixin youtube(name, root)
+mixin youtube(name, root, unique)
     p #{name} (youtube url)
-        input(type="url" name=name ng-model=root+name)
+        input(type="url" name=name ng-model=root+name id=unique)
 
-mixin img(name, root)
+mixin img(name, root, unique)
     p IMG #{name}
-        img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png")
+        img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png" id=unique)
         //TODO img error
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
@@ -64,11 +64,11 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                     else if typeof (val) == 'object'
                         +object(index, val, root+index+'.', level+1, '',unique+index, panelLevel+1)
                     else if val == "text"
-                        +text(index, root)
+                        +text(index, root, unique+index)
                     else if val == "youtube"
-                        +youtube(index, root)
+                        +youtube(index, root, unique+index)
                     else if val == "img"
-                        +img(index, root)
+                        +img(index, root, unique+index)
                 if remove != ''
                     button(ng-click=remove) Remove
 
