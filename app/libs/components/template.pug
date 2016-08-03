@@ -26,6 +26,9 @@ mixin img(name, root, unique)
 mixin or(name, root, unique)
     p OR
 
+mixin addOr()
+    p OR button add
+
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
     if name == ''
@@ -46,7 +49,10 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
         - addValue = "{"+addValue+"}"
     div
         #{tag} Array of data #{nameShown}
-        button(ng-click=root + name+".push("+addValue+")") Add element
+        if typeof (val) == 'object' && val.length == 1 && val[Object.keys(val)[0]].indexOf('|') !== -1
+            +addOr()
+        else
+            button(ng-click=root + name+".push("+addValue+")") Add element
         div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
             if val instanceof Array
                 if(val.title == "text" )
