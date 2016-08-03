@@ -23,6 +23,9 @@ mixin img(name, root, unique)
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
 
+mixin or(name, root, unique)
+    p OR
+
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
     if name == ''
@@ -73,6 +76,8 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                         +array(index, index, val, root, level+1, '',unique+index, panelLevel+1)
                     else if typeof (val) == 'object'
                         +object(index, val, root+index+'.', level+1, '',unique+index, panelLevel+1)
+                    else if val.indexOf('|') !== -1
+                        +or(index, root, unique + index)
                     else if val == "text"
                         +text(index, root, unique+index)
                     else if val == "youtube"
