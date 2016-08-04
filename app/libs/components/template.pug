@@ -76,7 +76,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
                 if(val.title == "text" )
                     +object('{{'+root + name+'[key'+level+'].title | title }}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                 else if orBool
-                    +object('Utils.keys('+rootS+')[0] == \'img\'? image : Utils.keys('+rootS+')[0] ', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
+                    +object("{{Utils.keys('+rootS+')[0] == 'img'? image : Utils.keys('+rootS+')[0]}}", val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                 else
                     +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                     //TODO a better name
