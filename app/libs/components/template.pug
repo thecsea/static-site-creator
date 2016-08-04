@@ -76,13 +76,13 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
             button(ng-click=root + name+".push("+addValue+")") Add element
         div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
             if val instanceof Array
-                if(val.title == "text" )
+                if(val.title == "textRow" )
                     +array('', '{{' + root + name + '[key' + level + '].title | title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                 else
                     +array('', 'Section', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                     //TODO a better name
             else if typeof (val) == 'object'
-                if(val.title == "text" )
+                if(val.title == "textRow" )
                     +object('{{'+root + name+'[key'+level+'].title | title }}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                 else if orBool
                     +object("{{Utils.keys("+root+name+"[key"+level+"])[0] == 'img'? 'image' : Utils.keys("+root+name+"[key"+level+"])[0]}}", val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
