@@ -1,6 +1,6 @@
 .app-page
   &__head
-    margin-bottom: 30px
+    margin: 30px 0
     &--left
       i, div
         float: left
@@ -26,6 +26,25 @@
 
       &:hover
         color: white
+
+  &__head-content
+    i
+      padding: 15px
+      margin: 0 10px
+      color: #888
+      background-color: #D8D8D8
+      border-radius: 50%
+      cursor: pointer
+
+      &:hover
+        color: #666
+
+  &__head--nofloat
+
+    .app-page__head--left
+      float: none
+
+
 
 
 
