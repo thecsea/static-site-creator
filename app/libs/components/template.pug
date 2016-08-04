@@ -44,6 +44,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     if name == ''
         - root = root.slice(0,-1)
     - val = value[0]
+    - orBool = false
     //TODO do some checks
     if val instanceof Array
         - addValue = "[]"
@@ -60,6 +61,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     div
         #{tag} Array of data #{nameShown}
         if typeof (val) == 'object' && Object.keys(val).length == 1 && val[Object.keys(val)[0]].indexOf('|') !== -1
+            - orBool = true
             +addOr(val[Object.keys(val)[0]], root + name)
         else
             button(ng-click=root + name+".push("+addValue+")") Add element
@@ -73,6 +75,8 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
             else if typeof (val) == 'object'
                 if(val.title == "text" )
                     +object('{{'+root + name+'[key'+level+'].title | title }}', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
+                else if orBool
+                    +object('Utils.keys('+rootS+')[0] == \'img\'? image : Utils.keys('+rootS+')[0] ', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                 else
                     +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                     //TODO a better name
