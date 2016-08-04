@@ -1,10 +1,17 @@
 
+mixin textRow(name, root, unique)
+    .app-textarea&attributes(attributes)
+        label(for=unique)
+            i.material-icons title
+            | #{name}
+        input(type="text" name=name ng-model=root+name id=unique)
+
 mixin text(name, root, unique)
     .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name}
-        textarea(type="text" name=name ng-model=root+name id=unique)
+        textarea(name=name ng-model=root+name id=unique)
 
 mixin youtube(name, root, unique)
     .app-youtube&attributes(attributes)
@@ -33,6 +40,8 @@ mixin or(name, root, unique, or)
             +youtube('youtube', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'youtube\''})
         else if orEle == "img"
             +img('img', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'img\''})
+        else if val == "textRow"
+            +textRow('textRow', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'textRow\''})
 
 mixin addOr(or, root)
     - or = or.split('|')
@@ -104,6 +113,8 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                         +youtube(index, root, unique+index)
                     else if val == "img"
                         +img(index, root, unique+index)
+                    else if val == "textRow"
+                        +textRow(index, root, unique + index)
                 if remove != ''
                     button(ng-click=remove) Remove
 
