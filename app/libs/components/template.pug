@@ -28,11 +28,11 @@ mixin or(name, root, unique, or)
     - rootS = root.slice(0,-1)
     each orEle in or
         if orEle == "text"
-            +text('text', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'text\''})
+            +text('text', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'text\''})
         else if orEle == "youtube"
-            +youtube('youtube', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'youtube\''})
+            +youtube('youtube', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'youtube\''})
         else if orEle == "img"
-            +img('img', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'img\''})
+            +img('img', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'img\''})
 
 mixin addOr(or, root)
     - or = or.split('|')
