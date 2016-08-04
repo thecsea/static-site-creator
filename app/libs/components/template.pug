@@ -123,11 +123,13 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
     //(class=panel(panelLevel))
     div.panel-default
-        .panel-heading
+        .panel-heading.clearfix
             #{tag}.panel-title
                 a(data-toggle="collapse" href="#" data-target="#"+unique) #{name}
+                    i.material-icons chevron_right
             if remove != ''
-                button(ng-click=remove).btn.remove-button Remove this section
+                button(ng-click=remove).remove-button
+                    i.material-icons delete
         .panel-collapse.collapse(id=unique)
             .panel-body
                 each val, index in obj

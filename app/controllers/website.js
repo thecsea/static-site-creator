@@ -13,19 +13,19 @@ angular.module('MyApp')
           if(!$rootScope.isAdmin())
               return;
           $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
-      }
+      };
 
       $scope.updateSection = function (index) {
           if(!$rootScope.isAdmin())
               return;
           $scope.currentSection = $scope.website.sections[index];
-      }
+      };
 
       $scope.deleteSection = function (index) {
           if(!$rootScope.isAdmin())
               return;
           $scope.currentSection = $scope.website.sections[index];
-      }
+      };
 
       $scope.deleteCurrentSection = function () {
           if(!$rootScope.isAdmin())
@@ -40,7 +40,7 @@ angular.module('MyApp')
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
           });
-      }
+      };
 
       $scope.saveCurrentSection = function () {
           if(!$rootScope.isAdmin())
@@ -61,7 +61,7 @@ angular.module('MyApp')
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
           });
-      }
+      };
 
       function getWebsiteSections(){
           WebsiteSections.getWebsiteSections(id).then(function (response) {
@@ -84,4 +84,19 @@ angular.module('MyApp')
               };
           });
       }
+      function hookCollapse(){
+          alert('entro');
+          var elements = $('a[data-toggle="collapse"]');
+          elements.on('show.bs.collapse',function(){
+              var _this = $(this);
+              var icon = _this.children[0];
+              icon.innerHTML = 'expand_more'
+          });
+          elements.on('hide.bs.collapse',function(){
+              var _this = $(this);
+              var icon = _this.children[0];
+              icon.innerHTML = 'chevron_right'
+          })
+      }
+      hookCollapse();
   });
