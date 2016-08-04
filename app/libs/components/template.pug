@@ -37,7 +37,7 @@ mixin or(name, root, unique, or)
 mixin addOr(or, root)
     - or = or.split('|')
     each orEle in or
-        button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle}
+        button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle=='img'?'image':orEle}
 
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
