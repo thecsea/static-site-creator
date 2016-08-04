@@ -99,7 +99,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
                     div
                         h5 Array of data
                         h4 #{nameShown}
-                button(ng-click=root + name + ".push(" + addValue + ")").btn Add element
+                button(ng-click=root + name + ".push(" + addValue + ")").btn Add section
             //button(ng-click=root + name+".push("+addValue+")") Add element
         div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
             if val instanceof Array
@@ -126,6 +126,8 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
         .panel-heading
             #{tag}.panel-title
                 a(data-toggle="collapse" href="#" data-target="#"+unique) #{name}
+            if remove != ''
+                button(ng-click=remove).btn.remove-button Remove this section
         .panel-collapse.collapse(id=unique)
             .panel-body
                 each val, index in obj
@@ -143,8 +145,6 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                         +img(index, root, unique+index)
                     else if val == "textRow"
                         +textRow(index, root, unique + index)
-                if remove != ''
-                    button(ng-click=remove).btn.remove-button Remove this section
 
 - function panel(level){
 -     if(level == 0){
