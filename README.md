@@ -50,14 +50,14 @@ Type `node server.js`
 
 ## EBNF templates
 S -> OBJ  
-OBJ -> \"{\"OBJELE (\",\" OBJELE)\*\"}\"  
-OBJELE -> NAME \":\" ELEMENT  
+OBJ -> "{"OBJELE ("," OBJELE)\*"}"  
+OBJELE -> NAME ":" ELEMENT  
 ElEMENT -> OBJ | ARRAY | BASICELE    
-OBJA -> \"{\"OBJELEA | (OBJELE (\",\" OBJELE)\*)\"}\"  
-OBJELEA -> NAME \":\" ORELEMENT  
-ARRAY -> \"[\" OBJA|ARRAY \"]\"  
-BASICELE -> \"text\" | \"textRow\" | \"img\" | \"youtube\"  
-ORELEMENT -> BASICELE (\"|\" BASICELE)*  
+OBJA -> "{"OBJELEA | (OBJELE ("," OBJELE)\*)"}"  
+OBJELEA -> NAME :" ORELEMENT  
+ARRAY -> "[" OBJA|ARRAY "]"  
+BASICELE -> "text" | "textRow" | "img" | "youtube"  
+ORELEMENT -> BASICELE ("|" BASICELE)*  
 NAME -> (LETTER) (DIGIT|LETTER)\*  
 
 ## TODO
