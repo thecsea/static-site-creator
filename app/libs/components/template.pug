@@ -1,33 +1,38 @@
 
 mixin textRow(name, root, unique)
-    .app-textarea&attributes(attributes)
+    .app-textrow&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name}
-        input(type="text" name=name ng-model=root+name id=unique)
+        input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+name+' here')
 
 mixin text(name, root, unique)
     .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name}
-        textarea(name=name ng-model=root+name id=unique)
+        textarea(name=name ng-model=root+name id=unique placeholder="Insert the "+name+' here')
 
 mixin youtube(name, root, unique)
     .app-youtube&attributes(attributes)
         label(for=unique)
             i.material-icons movie
-            #{name}
-        input(type="url" name=name ng-model=root+name id=unique)
+            | #{name}
+        input(type="url" name=name ng-model=root+name id=unique placeholder="Insert a youtube link")
 
 mixin img(name, root, unique)
     .app-img&attributes(attributes)
-        h5
+        label
             i.material-icons image
             | #{name}
-        img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png" id=unique)
+
         //TODO img error
-        input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
+        .app-img__file-btn.text-center
+            img(data-ng-src="data:{{"+root+name+".filetype}};base64,{{"+root+name+".base64}}" data-err-src="images/png/avatar.png" id=unique)
+            label.btn.btn-file
+                i.material-icons backup
+                input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input style='display: none;')
+        //input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
 
 mixin or(name, root, unique, or)
@@ -46,7 +51,14 @@ mixin or(name, root, unique, or)
 mixin addOr(or, root)
     - or = or.split('|')
     each orEle in or
-        button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle=='img'?'image':orEle}
+        case orEle
+            when 'text'
+                i.material-icons(ng-click=root + name+".push({"+orEle+":''})") text_fields
+            when 'img'
+                i.material-icons(ng-click=root + name+".push({"+orEle+":''})") image
+            when 'youtube'
+                i.material-icons(ng-click=root + name+".push({"+orEle+":''})") movie
+        //button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle=='img'?'image':orEle}
 
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
@@ -68,12 +80,27 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
                 - addValue.push(index2+':\'\'')
         - addValue = "{"+addValue+"}"
     div
-        #{tag} Array of data #{nameShown}
+        //#{tag} Array of data #{nameShown}
+
         if typeof (val) == 'object' && Object.keys(val).length == 1 && val[Object.keys(val)[0]].indexOf('|') !== -1
             - orBool = true
-            +addOr(val[Object.keys(val)[0]], root + name)
+            .app-page__head.app-page__head--nofloat
+                .app-page__head--left.clearfix
+                    i.material-icons content_copy
+                    div
+                        h5 Array of data
+                        h4 #{nameShown}
+                .app-page__head-content.text-center
+                    +addOr(val[Object.keys(val)[0]], root + name)
         else
-            button(ng-click=root + name+".push("+addValue+")") Add element
+            .app-page__head.clearfix
+                .app-page__head--left
+                    i.material-icons content_copy
+                    div
+                        h5 Array of data
+                        h4 #{nameShown}
+                button(ng-click=root + name + ".push(" + addValue + ")").btn Add element
+            //button(ng-click=root + name+".push("+addValue+")") Add element
         div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
             if val instanceof Array
                 if(val.title == "textRow" )
@@ -90,11 +117,12 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
                     +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel)
                     //TODO a better name
         if remove != ''
-            button(ng-click=remove) Remove
+            button(ng-click=remove).btn.remove-button Remove this section
 
 mixin object(name, obj, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
-    div(class=panel(panelLevel))
+    //(class=panel(panelLevel))
+    div.panel-default
         .panel-heading
             #{tag}.panel-title
                 a(data-toggle="collapse" href="#" data-target="#"+unique) #{name}
@@ -116,7 +144,7 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                     else if val == "textRow"
                         +textRow(index, root, unique + index)
                 if remove != ''
-                    button(ng-click=remove) Remove
+                    button(ng-click=remove).btn.remove-button Remove this section
 
 - function panel(level){
 -     if(level == 0){

@@ -1,13 +1,101 @@
+.panel
+  .panel-heading
+    padding: 0
+    a
+      display: block
+      color: white
+      font-weight: 400
+      padding: 20px 30px
+
+.app-textrow, .app-textarea, .app-img, .app-youtube
+  margin: 15px 0
+
 .app-textarea, .app-img, .app-youtube
-  margin-bottom: 30px
+  >label
+    font-size: 18px
+    font-weight: 400
+    display: block
+    margin: 0 0 15px 0
+
+    i
+      padding: 15px
+      background-color: #5ea7fd
+      color: white
+      border-radius: 50%
+      margin-right: 15px
+
+.app-textrow
+  padding: 15px 0 30px 0
+  border-bottom: 1px solid #D8D8D8
+
+  label
+    margin-right: 22.5px
+
+    i
+      margin-right: 5px
+      color: #5ea7fd
+
+  input
+    width: 250px
+    padding: 5px 10px
+    outline: none
+    border: 1px solid #D8D8D8
+
+    &:focus
+      border: 1px solid #5ea7fd
 
 .app-textarea
+
   textarea
-    width: 400px
+    width: 66%
+    max-width: 800px
+    padding: 10px
     resize: vertical
+    border: 1px solid #D8D8D8
     height: 150px
-    padding: 15px
+    outline: none
+
+    &:focus
+      border: 1px solid #5ea7fd
 
 .app-img
-  img
-    margin-bottom: 15px
+  &__file-btn
+    padding: 30px
+    background-color: #f5f5f5
+    label
+      padding: 20px
+      border-radius: 50%
+      border: 1px solid darken(#f5f5f5, 2%)
+      color: #5ea7fd
+      background-color: white
+
+      i
+        font-size: 32px
+
+      &:hover
+        color: #5ea7fd
+
+      &:focus, &:active
+        box-shadow: none
+
+.app-youtube
+  input
+    margin-top: 15px
+    width: 250px
+    padding: 5px 10px
+    outline: none
+    border: 1px solid #D8D8D8
+
+    &:focus
+      border: 1px solid #5ea7fd
+
+
+
+.remove-button
+  margin-top: 30px
+  background-color: #e74c3c
+  color: white
+  font-weight: 400
+
+  &:hover
+    color: white

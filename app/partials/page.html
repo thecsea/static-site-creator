@@ -1,19 +1,33 @@
 <div class="container">
-  <div class="panel">
-    <div class="panel-body">
-      <div ng-if="messages.error" role="alert" class="alert alert-danger">
-        <div ng-repeat="error in messages.error">{{error.msg}}</div>
-      </div>
-      <div ng-if="messages.success" role="alert" class="alert alert-success">
-        <div ng-repeat="success in messages.success">{{success.msg}}</div>
-      </div>
-      <div class="form-horizontal">
-        <legend>{{section.name}} of {{section.website.name}}</legend>
-        <span ng-show="!loaded">Loading... phase {{status.status}} of {{status.total_status}}... {{status.status_description}} </span>
-        <span ng-show="uploading">Saving... phase {{statusPush.status}} of {{statusPush.total_status}}...{{statusPush.status_description}}</span>
-        <compile-html ng-model="html"></compile-html>
-        <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="save()" ng-disabled="uploading || !loaded">Save</button>
-      </div>
+    <div class="panel">
+        <div class="panel-body">
+            <div ng-if="messages.error" role="alert" class="alert alert-danger">
+                <div ng-repeat="error in messages.error">{{error.msg}}</div>
+            </div>
+            <div ng-if="messages.success" role="alert" class="alert alert-success">
+                <div ng-repeat="success in messages.success">{{success.msg}}</div>
+            </div>
+            <div class="form-horizontal">
+                <div class="app-page__head clearfix">
+                    <div class="app-page__head--left">
+                        <i class="material-icons">insert_drive_file</i>
+                        <div>
+                            <h5>{{section.website.name}}</h5>
+                            <h4>{{section.name}}</h4>
+                        </div>
+                    </div>
+                    <button type="button" class="btn" data-toggle="modal" ng-click="save()"
+                            ng-hide="uploading || !loaded">Save
+                    </button>
+
+                    <!--<legend><i class="material-icons">insert_drive_file</i> - </legend>
+                    <button type="button" class="btn" data-toggle="modal" ng-click="save()" ng-hide="uploading || !loaded">Save</button>-->
+                </div>
+                <span ng-show="!loaded">Loading... phase {{status.status}} of {{status.total_status}}... {{status.status_description}} </span>
+                <span ng-show="uploading">Saving... phase {{statusPush.status}} of {{statusPush.total_status}}...{{statusPush.status_description}}</span>
+                <compile-html ng-model="html"></compile-html>
+
+            </div>
+        </div>
     </div>
-  </div>
 </div>
