@@ -98,6 +98,9 @@ angular.module('MyApp', ['ngRoute', 'satellizer', 'naif.base64', 'checklist-mode
 
     $rootScope.libs = {};
     $rootScope.libs.utils = $window.libs.utils;
+    $rootScope.Utils = {
+      keys : Object.keys
+    }
   }).filter('json', function() {
     return function(input) {
         return JSON.stringify(input)

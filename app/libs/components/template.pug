@@ -1,20 +1,20 @@
 
 mixin text(name, root, unique)
-    .app-textarea
+    .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name}
         textarea(type="text" name=name ng-model=root+name id=unique)
 
 mixin youtube(name, root, unique)
-    .app-youtube
+    .app-youtube&attributes(attributes)
         label(for=unique)
             i.material-icons movie
             #{name}
         input(type="url" name=name ng-model=root+name id=unique)
 
 mixin img(name, root, unique)
-    .app-img
+    .app-img&attributes(attributes)
         h5
             i.material-icons image
             | #{name}
@@ -23,11 +23,21 @@ mixin img(name, root, unique)
         input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
 
-mixin or(name, root, unique)
-    p OR
+mixin or(name, root, unique, or)
+    - or = or.split('|')
+    - rootS = root.slice(0,-1)
+    each orEle in or
+        if orEle == "text"
+            +text('text', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'text\''})
+        else if orEle == "youtube"
+            +youtube('youtube', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'youtube\''})
+        else if orEle == "img"
+            +img('img', root, unique + index)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'img\''})
 
-mixin addOr()
-    p OR button add
+mixin addOr(or, root)
+    - or = or.split('|')
+    each orEle in or
+        button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle}
 
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
     - tag = "h"+ (level+1)
@@ -49,8 +59,8 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
         - addValue = "{"+addValue+"}"
     div
         #{tag} Array of data #{nameShown}
-        if typeof (val) == 'object' && val.length == 1 && val[Object.keys(val)[0]].indexOf('|') !== -1
-            +addOr()
+        if typeof (val) == 'object' && Object.keys(val).length == 1 && val[Object.keys(val)[0]].indexOf('|') !== -1
+            +addOr(val[Object.keys(val)[0]], root + name)
         else
             button(ng-click=root + name+".push("+addValue+")") Add element
         div("ng-repeat"='(key'+level+',value'+level+') in '+root + name)
@@ -83,7 +93,7 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
                     else if typeof (val) == 'object'
                         +object(index, val, root+index+'.', level+1, '',unique+index, panelLevel+1)
                     else if val.indexOf('|') !== -1
-                        +or(index, root, unique + index)
+                        +or(index, root, unique + index, val)
                     else if val == "text"
                         +text(index, root, unique+index)
                     else if val == "youtube"
