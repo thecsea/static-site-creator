@@ -61,7 +61,7 @@ mixin addOr(or, root)
         //button(ng-click=root + name+".push({"+orEle+":''})") Add #{orEle=='img'?'image':orEle}
 
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
-    - tag = "h"+ (level+1)
+    - tag = hTag(level)
     if name == ''
         - root = root.slice(0,-1)
     - val = value[0]
@@ -120,7 +120,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel)
             button(ng-click=remove).btn.remove-button Remove this section
 
 mixin object(name, obj, root, level, remove, unique, panelLevel)
-    - tag = "h"+ (level+1)
+    - tag = hTag(level)
     //(class=panel(panelLevel))
     div.panel-default
         .panel-heading.clearfix
@@ -159,6 +159,14 @@ mixin object(name, obj, root, level, remove, unique, panelLevel)
 -         return "panel-warning panel";
 -     }else{
 -         return "panel-default panel";
+-     }
+- }
+
+- function hTag(level){
+-     if(level <= 6){
+-         return "h"+ (level+1)
+-     }else{
+-         return "h6";
 -     }
 - }
 
