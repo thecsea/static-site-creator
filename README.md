@@ -48,6 +48,18 @@ Type `pm2 start server.js` (install pm2 via `npm install pm2 -g`)
 #### Dev mode
 Type `node server.js`
 
+## EBNF templates
+S -> OBJ
+OBJ -> "{"OBJELE ("," OBJELE)\*"}"
+OBJELE -> NAME ":" ELEMENT
+ElEMENT -> OBJ | ARRAY | BASICELE
+OBJA -> "{"OBJELEA ("," OBJELEA)\*"}"
+OBJELEA -> NAME ":" ELEMENTA
+ElEMENTA -> OBJ | ARRAY | BASICELE | ORELEMENT
+ARRAY -> "[" OBJA|ARRAY "]"
+BASICELE -> "text" | "textRow" | "img" | "youtube"
+ORELEMENT -> BASICELE ("|" BASICELE)*
+NAME -> (LETTER) (DIGIT|LETTER)\*
 
 ## TODO
 - [ ] ES6 support
