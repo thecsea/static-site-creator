@@ -85,7 +85,6 @@ angular.module('MyApp')
           });
       }
       function hookCollapse(){
-          alert('entro');
           var elements = $('a[data-toggle="collapse"]');
           elements.on('show.bs.collapse',function(){
               var _this = $(this);
