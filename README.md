@@ -75,6 +75,7 @@ NAME -> (LETTER) (DIGIT|LETTER)\*
 - [ ] Privacy policy
 - [ ] Password confirmation
 - [ ] XSS and CSRF protections
+- [ ] Validate data with JSON schema
 
 ## Configuration
 - **Platform:** node
