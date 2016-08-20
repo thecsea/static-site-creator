@@ -21,6 +21,8 @@ Creator of static sites content for template managers (like pug ex-blade)
 - [ ] Editors log and history (who has done what)
 - [ ] Git auto retry in case of failure 
 
+## How it works
+
 ## How to use
 
 ### How to Install
