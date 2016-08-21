@@ -22,6 +22,7 @@ Creator of static sites content for template managers (like pug ex-blade)
 - [ ] Git auto retry in case of failure 
 
 ## How it works
+1. Each user can add some websites with a git repository associated 
 
 ## How to use
 
