@@ -23,6 +23,7 @@ Creator of static sites content for template managers (like pug ex-blade)
 
 ## How it works
 1. Each user can add some websites with a git repository associated 
+1. Each site has some subsections that correspond to the physical pages
 
 ## How to use
 
