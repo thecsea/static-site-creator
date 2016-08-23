@@ -4,6 +4,8 @@ Creator of static sites content for template managers (like pug ex-blade)
 
 [Example site](http://static-site.thecsea.it/) we are not responsable for any issues, also issues realted to privacy and security of the storage
 
+To save the images into files you cna use [json images saver](https://github.com/thecsea/json-images-saver)
+
 ## Features
 - [x] Export to javascript object for pug (ex balde) template
 - [ ] Export to any text format
