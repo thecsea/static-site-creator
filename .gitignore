@@ -17,6 +17,7 @@ coverage
 # DATA
 .env
 dev.sqlite3
+*.old
 
 # Dependency directory
 node_modules
