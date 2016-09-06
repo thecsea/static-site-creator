@@ -174,12 +174,15 @@ script(type='text/javascript').
 
     Array.prototype.move = function (old_index, new_index) {
         while (old_index < 0) {
-            old_index += this.length;
+            return this;
+            //old_index += this.length;
         }
         while (new_index < 0) {
-            new_index += this.length;
+            return this;
+            //new_index += this.length;
         }
         if (new_index >= this.length) {
+            return this;
             var k = new_index - this.length;
             while ((k--) + 1) {
                 this.push(undefined);
