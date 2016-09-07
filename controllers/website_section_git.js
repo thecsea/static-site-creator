@@ -64,6 +64,10 @@ exports.websiteSectionGitStatusGet = function(req, res) {
     if(req.user.get('editor')) {
         delete currentStatus.section.website.editors;
     }
+    if(req.params.noData== "no-data")
+    {
+        currentStatus.data = "";
+    }
     res.send({status: currentStatus});
 };
 
@@ -144,7 +148,7 @@ exports.websiteSectionGitPut = function(req, res) {
             })
             .then(()=>{
                 parentData.cleanupCallback();
-                return status.save({status:4, data:'{}', completed:true, status_description:'Done'});
+                return status.save({status:4, completed:true, status_description:'Done'});
             })
             .catch((err)=>{
                 console.log(err);

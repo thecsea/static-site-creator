@@ -47,7 +47,7 @@ angular.module('MyApp')
               var interval = null;
               inside = true;
               interval = $window.setInterval(function(){
-                  return WebsiteSectionGit.status(websiteId, id, $scope.statusPush.id).then(function (response) {
+                  return WebsiteSectionGit.status(websiteId, id, $scope.statusPush.id, "", "no-data").then(function (response) {
                       $scope.statusPush = response.data.status;
                       //err
                       if ($scope.statusPush.error) {
@@ -85,7 +85,7 @@ angular.module('MyApp')
                   error: Array.isArray(response.data) ? response.data : [response.data]
               };
           });
-      }
+      };
 
       function getSection(){
           return WebsiteSections.getWebsiteSection(websiteId, id).then(function (response) {
@@ -107,7 +107,7 @@ angular.module('MyApp')
               var interval = null;
               inside = true;
               interval = $window.setInterval(function(){
-                  return WebsiteSectionGit.status(websiteId, id, $scope.status.id).then(function (response) {
+                  return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "data").then(function (response) {
                       $scope.status = response.data.status;
                       //err
                       if ($scope.status.error) {
