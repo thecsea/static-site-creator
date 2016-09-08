@@ -69,6 +69,7 @@ exports.websiteSectionGitStatusGet = function(req, res) {
         currentStatus.data = "";
     }
     res.send({status: currentStatus});
+    req.currentStatus = "";
 };
 
 /**
