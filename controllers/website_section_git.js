@@ -69,7 +69,7 @@ exports.websiteSectionGitStatusGet = function(req, res) {
         currentStatus.data = "";
     }
     res.send({status: currentStatus});
-    req.currentStatus = "";
+    req.currentStatus = ""; //fee up req
 };
 
 /**
@@ -128,7 +128,9 @@ exports.websiteSectionGitPut = function(req, res) {
 
     createStatus(req.currentWebsiteSection, 'push', 0, 4, 'Cloning data', req.body.data)
         .then((status)=> {
-            res.send({status: status});
+            var tmpStatus = status.toJSON();
+            tmpStatus.data = "";
+            res.send({status: tmpStatus}).end();
             //async execution
             clone(req.currentWebsiteSection, parentData)
             .then((data)=> {
