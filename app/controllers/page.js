@@ -75,7 +75,7 @@ angular.module('MyApp')
                       rejectPromise();
                       $window.clearInterval(interval);
                   });
-              },250);
+              },500);
               return sectionPromise;
           }).catch(function (response) {
               if(inside)
@@ -142,7 +142,7 @@ angular.module('MyApp')
                       rejectPromise();
                       $window.clearInterval(interval);
                   });
-              },250);
+              },500);
               return sectionPromise;
           }).catch(function (response) {
               if(inside)
