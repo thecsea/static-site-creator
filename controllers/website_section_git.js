@@ -34,7 +34,10 @@ exports.ensureAuthenticated = function(req, res, next) {
 
 exports.ensureMyStatus = function(req, res, next) {
     if (req.isAuthenticated()) {
-        new GitStatus({id: req.params.id}).fetch({withRelated: ['section', 'section.website', 'section.website.user','section.website.editors']}).then((status)=>{
+        var columns = '*';
+        if(req.params.noData== "no-data")
+            columns = ['id', 'section_id', 'type', 'error', 'status', 'total_status', 'status_description', 'completed', 'created_at' , 'updated_at'];
+        new GitStatus({id: req.params.id}).fetch({columns: columns,withRelated: ['section', 'section.website', 'section.website.user','section.website.editors']}).then((status)=>{
             if(req.user.get('editor')){
                 if (pluck(status.related('section').related('website').related('editors'),'id').indexOf(req.user.id) != -1) {
                     req.currentStatus = status;
@@ -63,10 +66,6 @@ exports.websiteSectionGitStatusGet = function(req, res) {
     var currentStatus = req.currentStatus.toJSON();
     if(req.user.get('editor')) {
         delete currentStatus.section.website.editors;
-    }
-    if(req.params.noData== "no-data")
-    {
-        currentStatus.data = "";
     }
     res.send({status: currentStatus});
     req.currentStatus = ""; //fee up req
