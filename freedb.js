@@ -5,7 +5,8 @@ var config = require('./knexfile');
 var knex = require('knex')(config);
 
 module.exports = function() {
-    var dateOffset = (24 * 60 * 60 * 1000) * 5; //5 days
+    //var dateOffset = (24 * 60 * 60 * 1000) * 5; //5 days
+    var dateOffset = (60 * 60 * 1000); //one hour
     var myDate = new Date();
     myDate.setTime(myDate.getTime() - dateOffset);
     knex('git_status')
