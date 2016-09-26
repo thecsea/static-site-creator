@@ -1,5 +1,8 @@
 # Static site creator
 
+
+[![npm version](https://badge.fury.io/js/static-site-creator.svg)](https://badge.fury.io/js/static-site-creator)
+
 Creator of static sites content for template managers (like pug ex-blade)
 
 [Example site](http://static-site.thecsea.it/) we are not responsable for any issues, also issues realted to privacy and security of the storage
