@@ -127,7 +127,6 @@ angular.module('MyApp')
                   .then(function (response) {
                       return getDataCallback(response, interval, rejectPromise, function() {
                           return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "data").then(function () {
-                              //TODO test inner catch
                               return getDataCallback(response, interval, rejectPromise, function () {
                                   try {
                                       $scope.status.data = JSON.parse($scope.status.data);
