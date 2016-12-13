@@ -97,20 +97,21 @@ angular.module('MyApp')
           });
       }
 
-      function getDataCallback(response, interval, rejectPromise, okCallback){
-          $scope.status = response.data.status;
-          //err
-          if ($scope.status.error) {
-              $scope.messages = {
-                  error: [{msg: $scope.status.status_description}]
-              };
-              $scope.loaded = true;
-              rejectPromise();
-              $window.clearInterval(interval);
-          }
-          else if ($scope.status.completed) {
-              return okCallback();
-          }
+      function getDataCallback(response){
+          return new Promise(function(resolve, reject){
+              //err
+              if ($scope.status.error) {
+                  $scope.messages = {
+                      error: [{msg: $scope.status.status_description}]
+                  };
+                  $scope.loaded = true;
+                  return reject();
+              }
+              else if ($scope.status.completed) {
+                  return resolve(response);
+              }
+              return resolve('break');
+          });
       }
 
       function getData(){
@@ -125,25 +126,31 @@ angular.module('MyApp')
               interval = $window.setInterval(function(){
                   return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "no-data")
                   .then(function (response) {
-                      return getDataCallback(response, interval, rejectPromise, function() {
-                          return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "data").then(function () {
-                              return getDataCallback(response, interval, rejectPromise, function () {
-                                  try {
-                                      $scope.status.data = JSON.parse($scope.status.data);
-                                      $scope.loaded = true;
-                                      resolvePromise();
-                                  } catch (e) {
-                                      console.error(e);
-                                      $scope.loaded = true;
-                                      $scope.messages = {
-                                          error: [{msg: 'Error during parsing JSON'}]
-                                      };
-                                      rejectPromise();
-                                  }
-                                  $window.clearInterval(interval);
-                              });
-                          });
-                      });
+                      $scope.status = response.data.status;
+                      return getDataCallback(response, interval)
+                      .then(function(status){
+                          if(status == 'break') return status;
+                          $window.clearInterval(interval);
+                          return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "data");
+                      }).then(function (response) {
+                          if(response == 'break') return response;
+                          $scope.status = response.data.status;
+                          return getDataCallback(response);
+                      }).then(function (response) {
+                          if(response == 'break') return response;
+                          try {
+                              $scope.status.data = JSON.parse($scope.status.data);
+                              $scope.loaded = true;
+                              return resolvePromise();
+                          } catch (e) {
+                              console.error(e);
+                              $scope.loaded = true;
+                              $scope.messages = {
+                                  error: [{msg: 'Error during parsing JSON'}]
+                              };
+                              return rejectPromise();
+                          }
+                      }).catch(rejectPromise);
                   }).catch(function (response) {
                       //TODO stop after 2/3 failures
                       $scope.loaded = true;
