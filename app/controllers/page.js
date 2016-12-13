@@ -127,12 +127,16 @@ angular.module('MyApp')
                           return getDataCallback(response, interval);
                       }).then(function(status){
                           if(status == 'break') return status;
+                          $window.clearInterval(interval);
                           return WebsiteSectionGit.status(websiteId, id, statusId, "", "data");
                       }).then(function (response) {
                           if(response == 'break') return response;
-                          $window.clearInterval(interval);
                           $scope.status = response.data.status;
-                          return getDataCallback(response);
+                          return getDataCallback(response).then(function (response) {
+                              if(response == 'break')
+                                  return Promise.reject({data:[{msg: 'Error during retrieve of data'}]});
+                              return response;
+                          });
                       }).then(function (response) {
                           if(response == 'break') return response;
                           try {
