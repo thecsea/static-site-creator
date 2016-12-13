@@ -101,11 +101,7 @@ angular.module('MyApp')
           return new Promise(function(resolve, reject){
               //err
               if ($scope.status.error) {
-                  $scope.messages = {
-                      error: [{msg: $scope.status.status_description}]
-                  };
-                  $scope.loaded = true;
-                  return reject();
+                  return reject({data:[{msg: $scope.status.status_description}]});
               }
               else if ($scope.status.completed) {
                   return resolve(response);
@@ -123,17 +119,18 @@ angular.module('MyApp')
               $scope.status = response.data.status;
               var interval = null;
               inside = true;
+              var statusId = $scope.status.id;
               interval = $window.setInterval(function(){
-                  return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "no-data")
-                  .then(function (response) {
-                      $scope.status = response.data.status;
-                      return getDataCallback(response, interval)
-                      .then(function(status){
+                  return WebsiteSectionGit.status(websiteId, id, statusId, "", "no-data")
+                      .then(function (response) {
+                          $scope.status = response.data.status;
+                          return getDataCallback(response, interval);
+                      }).then(function(status){
                           if(status == 'break') return status;
-                          $window.clearInterval(interval);
-                          return WebsiteSectionGit.status(websiteId, id, $scope.status.id, "", "data");
+                          return WebsiteSectionGit.status(websiteId, id, statusId, "", "data");
                       }).then(function (response) {
                           if(response == 'break') return response;
+                          $window.clearInterval(interval);
                           $scope.status = response.data.status;
                           return getDataCallback(response);
                       }).then(function (response) {
@@ -144,22 +141,17 @@ angular.module('MyApp')
                               return resolvePromise();
                           } catch (e) {
                               console.error(e);
-                              $scope.loaded = true;
-                              $scope.messages = {
-                                  error: [{msg: 'Error during parsing JSON'}]
-                              };
-                              return rejectPromise();
+                              return Promise.reject({data:[{msg: 'Error during parsing JSON'}]});
                           }
-                      }).catch(rejectPromise);
-                  }).catch(function (response) {
-                      //TODO stop after 2/3 failures
-                      $scope.loaded = true;
-                      $scope.messages = {
-                          error: Array.isArray(response.data) ? response.data : [response.data]
-                      };
-                      rejectPromise();
-                      $window.clearInterval(interval);
-                  });
+                      }).catch(function (response) {
+                          //TODO stop after 2/3 failures
+                          $scope.loaded = true;
+                          $scope.messages = {
+                              error: Array.isArray(response.data) ? response.data : [response.data]
+                          };
+                          $window.clearInterval(interval);
+                          return rejectPromise();
+                    });
               },500);
               return sectionPromise;
           }).catch(function (response) {
