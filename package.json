@@ -1,6 +1,6 @@
 {
   "name": "static-site-creator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Creator of static sites content for template managers (like pug ex-blade)",
   "scripts": {
     "build": "gulp build",
