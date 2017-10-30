@@ -80,7 +80,8 @@ exports.websitesPost = function(req, res) {
       name: req.body.name,
       url: req.body.url,
       webhook: req.body.webhook,
-      git_url: req.body.git_url
+      git_url: req.body.git_url,
+      branch: req.body.branch
     });
   })
   .then(function(website) {

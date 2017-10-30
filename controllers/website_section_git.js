@@ -138,7 +138,7 @@ exports.websiteSectionGitPut = function(req, res) {
             }).then((data)=> {
                 return filePutContents(dataGlobal.clonePath + '/data/' + fileName, status.get('data'))
             }).then(()=>status.save({status:2, status_description:'Pushing data'}))
-            .then(()=>CommitAndPush(dataGlobal.path, dataGlobal.clonePath, 'data/'+fileName, req.currentWebsiteSection.get('name') + ' updated'))
+            .then(()=>CommitAndPush(dataGlobal.path, dataGlobal.clonePath, 'data/'+fileName, req.currentWebsiteSection.get('name') + ' updated', req.currentWebsiteSection.related('website').get('branch') || 'master'))
             .then(()=>status.save({status:3, status_description:'Calling webhook'}))
             .then((ret)=>{
                 var webhook = req.currentWebsiteSection.related('website').get('webhook');
@@ -174,6 +174,7 @@ function clone(section, parentData){
         parentData.cleanupCallback = values[1].cleanupCallback;
 
         var url = section.related('website').get('git_url');
+        var branch = section.related('website').get('branch') || 'master';
         ssh = ssh.pop();//TODO improve this, multiple ssh kesy case
         var clonePath = path + '/git';
 
@@ -199,13 +200,20 @@ function clone(section, parentData){
             filePutContents(path + '/private.pem', ssh.get('private'))
             ])
             .then(()=>{return Git.Clone(url, clonePath, opts)})
+            .then(repo=>{
+                return repo.getBranch('refs/remotes/origin/' + branch)
+                    .then(function(reference) {
+                      //checkout branch
+                      return repo.checkoutRef(reference);
+                    }).then(()=>repo);
+            })
             .then((repo)=>{
                 return {repo: repo, clonePath: clonePath, path:path};
             });
     });
 }
 
-function CommitAndPush(path, clonePath, file, message){
+function CommitAndPush(path, clonePath, file, message, branch){
     var repo = null;
     var index = null;
     var oid = null;
@@ -256,7 +264,7 @@ function CommitAndPush(path, clonePath, file, message){
             remote = remoteResult;
 
             return remote.push(
-                ["refs/heads/master:refs/heads/master"],
+                ["refs/heads/"+branch+":refs/heads/"+branch],
                 {
                     callbacks: {
                         credentials: function(url, userName) {
