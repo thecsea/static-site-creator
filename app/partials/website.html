@@ -41,6 +41,23 @@
             <div ng-repeat="error in messages.error">{{error.msg}}</div>
           </div>
           <form ng-submit="saveCurrentSection()" class="form-horizontal">
+            <div class="form-group" ng-show="currentSection.id == 0">
+              <label for="copy-website" class="col-sm-3">Website</label>
+              <div class="col-sm-7">
+                <select class="form-control" id="copy-website" ng-model="copyWebsite" ng-change="getCopyWebsiteSections()">
+                  <option ng-repeat="website in copyWebsites">{{website.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" ng-show="currentSection.id == 0">
+              <label for="copy-website-section" class="col-sm-3">Section</label>
+              <div class="col-sm-7">
+                <select class="form-control" id="copy-website-section" ng-model="copyWebsiteSection" ng-change="cloneCopyWebsiteSection()">
+                  <option ng-repeat="section in copyWebsiteSections">{{section.name}}</option>
+                </select>
+              </div>
+            </div>
+            <hr ng-show="currentSection.id == 0">
             <div class="form-group">
               <label for="name" class="col-sm-3">Name</label>
               <div class="col-sm-7">

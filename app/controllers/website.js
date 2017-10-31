@@ -1,18 +1,26 @@
 angular.module('MyApp')
-  .controller('WebsiteCtrl', function($scope, $routeParams, $rootScope, $auth, WebsiteSections, Templates) {
+  .controller('WebsiteCtrl', function($scope, $routeParams, $rootScope, $auth, Websites, WebsiteSections, Templates) {
       var id = $routeParams.id;
       $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
       $scope.website = {name:'', sections:[]};
       $scope.templates = [];
+      $scope.copyWebsites = [];
+      $scope.copyWebsite = {id: 0, name: ''};
+      $scope.copyWebsiteSections = [];
+      $scope.copySection = {id: 0, name: ''};
       if($auth.isAuthenticated()) {
           getWebsiteSections();
           getTemplates();
+          getCopyWebsites();
       }
 
       $scope.newSection = function () {
           if(!$rootScope.isAdmin())
               return;
           $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
+          $scope.copyWebsite = {id: 0, name: ''};
+          $scope.copyWebsiteSections = [];
+          $scope.copySection = {id: 0, name: ''};
       };
 
       $scope.cloneSection = function (index) {
@@ -70,6 +78,36 @@ angular.module('MyApp')
               };
           });
       };
+
+      $scope.getCopyWebsiteSections = function () {
+          if(!$rootScope.isAdmin())
+              return;
+          WebsiteSections.getWebsiteSections(id).then(function (response) {
+              $scope.copyWebsiteSections = response.data.website.sections;
+          }).catch(function (response) {
+              $scope.messages = {
+                  error: Array.isArray(response.data) ? response.data : [response.data]
+              };
+          });
+      };
+
+      $scope.cloneCopyWebsiteSection = function () {
+          if(!$rootScope.isAdmin())
+              return;
+          var tmp = JSON.parse(JSON.stringify($scope.copySection))
+          tmp.id = 0;
+          $scope.currentSection = tmp;
+      };
+
+      function getCopyWebsites(){
+          Websites.getWebsites().then(function (response) {
+              $scope.copyWebsites = response.data.websites;
+          }).catch(function (response) {
+              $scope.messages = {
+                  error: Array.isArray(response.data) ? response.data : [response.data]
+              };
+          });
+      }
 
       function getWebsiteSections(){
           WebsiteSections.getWebsiteSections(id).then(function (response) {
