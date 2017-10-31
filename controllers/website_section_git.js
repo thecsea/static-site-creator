@@ -257,7 +257,7 @@ function CommitAndPush(path, clonePath, file, message, branch){
         .then(function(parent) {
             var author = Git.Signature.now("static website creator", "static-site@thecsea.it");
 
-            return repo.createCommit("HEAD", author, author, message, oid, [parent]);
+            return repo.createCommit(branch, author, author, message, oid, [parent]);
         })
         .then(function(commitId) {
             //console.log("New Commit: ", commitId);
