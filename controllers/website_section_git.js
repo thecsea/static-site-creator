@@ -218,7 +218,6 @@ function CommitAndPush(path, clonePath, file, message, branch){
     var index = null;
     var oid = null;
     var remote = null;
-    var reference = null;
     return Git.Repository.open(clonePath)
         .then(function(repoResult) {
             repo = repoResult;
@@ -226,11 +225,7 @@ function CommitAndPush(path, clonePath, file, message, branch){
             return '';
         })
         .then(()=>repo.getBranch('refs/remotes/origin/' + branch))
-        .then((referenceR) => {
-            reference = referenceR;
-            console.log('reference', reference)
-            return repo.checkoutRef(referenceR);
-        })
+        .then((reference) => repo.checkoutRef(reference))
         .then(function() {
             return repo.refreshIndex();
         })
@@ -257,7 +252,7 @@ function CommitAndPush(path, clonePath, file, message, branch){
         .then(function(parent) {
             var author = Git.Signature.now("static website creator", "static-site@thecsea.it");
 
-            return repo.createCommit(branch, author, author, message, oid, [parent]);
+            return repo.createCommit("refs/heads/"+branch, author, author, message, oid, [parent]);
         })
         .then(function(commitId) {
             //console.log("New Commit: ", commitId);
