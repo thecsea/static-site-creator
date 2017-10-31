@@ -94,12 +94,12 @@ exports.websitesPost = function(req, res) {
     res.send({ website: website.toJSON() });
   })
   .catch(function(err) {
-    if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
+    /*if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
       return res.status(422).send({ msg: 'The url inserted was already used' });
-    }else {
+    }else {*/
       console.log(err);
       return res.status(500).send({ msg: 'Error during creation of the website' });
-    }
+    //}
   });
 };
 
@@ -139,8 +139,8 @@ exports.websitesPut = function(req, res) {
   }).catch(function(err) {
     if (err.code === 'EDITOR_NOT_MINE') {
       return res.status(422).send({ msg: 'At least one editor is not yours' });
-    }else if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
-      return res.status(422).send({ msg: 'The url inserted was already used' });
+    /*}else if (err.code === 'ER_DUP_ENTRY'  || err.code === 'SQLITE_CONSTRAINT' || err.code == '23505') {
+      return res.status(422).send({ msg: 'The url inserted was already used' });*/
     }else {
       console.log(err);
       return res.status(500).send({ msg: 'Error during updating of the website' });
