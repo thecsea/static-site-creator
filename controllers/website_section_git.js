@@ -218,14 +218,19 @@ function CommitAndPush(path, clonePath, file, message, branch){
     var index = null;
     var oid = null;
     var remote = null;
+    var reference = null;
     return Git.Repository.open(clonePath)
         .then(function(repoResult) {
             repo = repoResult;
             //return fse.ensureDir(path.join(repo.workdir(), directoryName));
             return '';
         })
-        .then(()=>repo.getBranch('refs/remotes/origin/' + branch)
-        .then((reference) => repo.checkoutRef(reference))
+        .then(()=>repo.getBranch('refs/remotes/origin/' + branch))
+        .then((referenceR) => {
+            reference = referenceR;
+            console.log('reference', reference)
+            return repo.checkoutRef(referenceR);
+        })
         .then(function() {
             return repo.refreshIndex();
         })
