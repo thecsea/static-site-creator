@@ -84,7 +84,6 @@ angular.module('MyApp')
               return;
           WebsiteSections.getWebsiteSections($scope.copyWebsite).then(function (response) {
               $scope.copyWebsiteSections = response.data.website.sections;
-              $scope.$apply();
           }).catch(function (response) {
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
@@ -98,7 +97,6 @@ angular.module('MyApp')
           var tmp = JSON.parse(JSON.stringify(getCopyWebsiteSectionById($scope.copyWebsiteSection)))
           tmp.id = 0;
           $scope.currentSection = tmp;
-          $scope.$apply();
       };
 
       function getCopyWebsiteSectionById(id){
