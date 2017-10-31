@@ -7,7 +7,7 @@ angular.module('MyApp')
       $scope.copyWebsites = [];
       $scope.copyWebsite = {id: 0, name: ''};
       $scope.copyWebsiteSections = [];
-      $scope.copySection = {id: 0, name: ''};
+      $scope.copyWebsiteSection = {id: 0, name: ''};
       if($auth.isAuthenticated()) {
           getWebsiteSections();
           getTemplates();
@@ -20,7 +20,7 @@ angular.module('MyApp')
           $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
           $scope.copyWebsite = {id: 0, name: ''};
           $scope.copyWebsiteSections = [];
-          $scope.copySection = {id: 0, name: ''};
+          $scope.copyWebsiteSection = {id: 0, name: ''};
       };
 
       $scope.cloneSection = function (index) {
@@ -82,8 +82,9 @@ angular.module('MyApp')
       $scope.getCopyWebsiteSections = function () {
           if(!$rootScope.isAdmin())
               return;
-          WebsiteSections.getWebsiteSections(id).then(function (response) {
+          WebsiteSections.getWebsiteSections($scope.copyWebsite.id).then(function (response) {
               $scope.copyWebsiteSections = response.data.website.sections;
+              $scope.$apply();
           }).catch(function (response) {
               $scope.messages = {
                   error: Array.isArray(response.data) ? response.data : [response.data]
@@ -94,9 +95,10 @@ angular.module('MyApp')
       $scope.cloneCopyWebsiteSection = function () {
           if(!$rootScope.isAdmin())
               return;
-          var tmp = JSON.parse(JSON.stringify($scope.copySection))
+          var tmp = JSON.parse(JSON.stringify($scope.copyWebsiteSection))
           tmp.id = 0;
           $scope.currentSection = tmp;
+          $scope.$apply();
       };
 
       function getCopyWebsites(){
