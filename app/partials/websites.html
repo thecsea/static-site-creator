@@ -13,11 +13,14 @@
         <br>
         <span ng-if="websites.length == 0">There are no websites yet</span>
         <div class="form-group" ng-repeat="website in websites">
-          <a class="col-sm-4" ng-href="websites/{{website.id}}">{{website.name}}</a>
-          <div class="col-sm-4">
+          <a class="col-sm-3" ng-href="websites/{{website.id}}">{{website.name}}</a>
+          <div class="col-sm-3">
             <span class="material-icons" ng-if="isAdmin()" data-toggle="modal" data-target="#popup" ng-click="updateWebsite($index)" style="cursor: pointer;">edit</span>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-3">
+            <span class="material-icons" ng-if="isAdmin()" data-toggle="modal" data-target="#popup" ng-click="cloneWebsite($index)" style="cursor: pointer;">content copy</span>
+          </div>
+          <div class="col-sm-3">
             <span class="material-icons" ng-if="isAdmin()" data-toggle="modal" data-target="#confirm-delete" ng-click="deleteWebsite($index)" style="cursor: pointer;">delete</span>
           </div>
         </div>

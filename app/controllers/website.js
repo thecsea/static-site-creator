@@ -15,6 +15,14 @@ angular.module('MyApp')
           $scope.currentSection = {id: 0, name:'', path:'', template_id: 0};
       };
 
+      $scope.cloneSection = function (index) {
+          if(!$rootScope.isAdmin())
+              return;
+          var tmp = JSON.parse(JSON.stringify($scope.website.sections[index]))
+          tmp.id = 0;
+          $scope.currentSection = tmp;
+      };
+
       $scope.updateSection = function (index) {
           if(!$rootScope.isAdmin())
               return;

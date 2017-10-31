@@ -20,6 +20,14 @@ angular.module('MyApp')
           $scope.currentWebsite = $scope.websites[index];
       }
 
+      $scope.cloneWebsite = function (index) {
+        if(!$rootScope.isAdmin())
+          return;
+        var tmp = JSON.parse(JSON.stringify($scope.websites[index]))
+        tmp.id = 0;
+        $scope.currentWebsite = tmp;
+      };
+
       $scope.deleteWebsite = function (index) {
           if(!$rootScope.isAdmin())
               return;

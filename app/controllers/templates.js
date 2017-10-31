@@ -21,6 +21,20 @@ angular.module('MyApp')
           }
       }
 
+      $scope.cloneTemplate = function (index) {
+          var tmp = JSON.parse(JSON.stringify($scope.templates[index]))
+          tmp.id = 0;
+          $scope.currentTemplate = tmp;
+          try{
+              $scope.currentTemplate.structure = JSON.stringify($scope.currentTemplate.parsedStructure, null, 4);
+          }catch(e){
+              $scope.messages = {
+                  error: [{msg:'Error during parsing JSON'}]
+              };
+              $('#popup').modal('hide');
+          }
+      }
+
       $scope.deleteTemplate = function (index) {
           $scope.currentTemplate = $scope.templates[index];
       }
