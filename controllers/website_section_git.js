@@ -224,6 +224,8 @@ function CommitAndPush(path, clonePath, file, message, branch){
             //return fse.ensureDir(path.join(repo.workdir(), directoryName));
             return '';
         })
+        .then(()=>repo.getBranch('refs/remotes/origin/' + branch)
+        .then((reference) => repo.checkoutRef(reference))
         .then(function() {
             return repo.refreshIndex();
         })
