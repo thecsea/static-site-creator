@@ -45,7 +45,7 @@
               <label for="copy-website" class="col-sm-3">Website</label>
               <div class="col-sm-7">
                 <select class="form-control" id="copy-website" ng-model="copyWebsite" ng-change="getCopyWebsiteSections()">
-                  <option ng-repeat="website in copyWebsites">{{website.name}}</option>
+                  <option ng-repeat="website in copyWebsites" ng-value="website.id">{{website.name}}</option>
                 </select>
               </div>
             </div>
@@ -53,7 +53,7 @@
               <label for="copy-website-section" class="col-sm-3">Section</label>
               <div class="col-sm-7">
                 <select class="form-control" id="copy-website-section" ng-model="copyWebsiteSection" ng-change="cloneCopyWebsiteSection()">
-                  <option ng-repeat="section in copyWebsiteSections">{{section.name}}</option>
+                  <option ng-repeat="section in copyWebsiteSections" ng-value="section.id">{{section.name}}</option>
                 </select>
               </div>
             </div>
