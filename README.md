@@ -25,6 +25,7 @@ To save the images into files you cna use [json images saver](https://github.com
 - [ ] Tmp storage for data before pushing
 - [ ] Editors log and history (who has done what)
 - [ ] Git auto retry in case of failure 
+- [ ] Boolean type in templates
 
 ## How it works
 1. Each user can add some websites with a git repository associated 
