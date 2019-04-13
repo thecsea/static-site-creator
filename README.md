@@ -62,10 +62,10 @@ Type `node server.js`
 S -> OBJ  
 OBJ -> "{"OBJELE ("," OBJELE)\*"}"  
 OBJELE -> NAME ":" ELEMENT  
-ElEMENT -> OBJ | ARRAY | BASICELE    
+ELEMENT -> OBJ | ARRAY | BASICELE
 OBJA -> "{"OBJELEA | (OBJELE ("," OBJELE)\*)"}"  
 OBJELEA -> NAME :" ORELEMENT  
-ARRAY -> "[" OBJA|ARRAY "]"  
+ARRAY -> "[" OBJA|ARRAY|BASICELE "]"
 BASICELE -> "text" | "textRow" | "img" | "youtube"  
 ORELEMENT -> BASICELE ("|" BASICELE)*  
 NAME -> (LETTER) (DIGIT|LETTER)\*  
