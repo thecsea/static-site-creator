@@ -1,9 +1,20 @@
-
-mixin textRow(name, root, unique, title)
+mixin removeMoveBasic(remove, movePath, moveIndex)
+    - remove = remove || ''
+    - movePath = movePath || ''
+    if remove != ''
+        button(ng-click=remove).remove-button
+            i.material-icons delete
+    if movePath != ''
+        button(ng-click=movePath + "(" + moveIndex + "," + moveIndex + "-1)").up-button
+            i.material-icons arrow_upward
+        button(ng-click=movePath + "(" + moveIndex + "," + moveIndex + "+1)").down-button
+            i.material-icons arrow_downward
+mixin textRow(name, root, unique, title, remove, movePath, moveIndex)
     .app-textrow&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name || title}
+            +removeMoveBasic(remove, movePath, moveIndex)
         input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
 mixin text(name, root, unique, title)
@@ -11,6 +22,7 @@ mixin text(name, root, unique, title)
         label(for=unique)
             i.material-icons title
             | #{name || title}
+            +removeMoveBasic(remove, movePath, moveIndex)
         textarea(name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
 mixin youtube(name, root, unique, title)
@@ -18,6 +30,7 @@ mixin youtube(name, root, unique, title)
         label(for=unique)
             i.material-icons movie
             | #{name || title}
+            +removeMoveBasic(remove, movePath, moveIndex)
         input(type="url" name=name ng-model=root+name id=unique placeholder="Insert a youtube link")
 
 mixin img(name, root, unique, title)
@@ -25,6 +38,7 @@ mixin img(name, root, unique, title)
         label
             i.material-icons image
             | #{name || title}
+            +removeMoveBasic(remove, movePath, moveIndex)
 
         //TODO img error
         .app-img__file-btn.text-center
@@ -119,13 +133,13 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
                     +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel, root + name+".move","key"+level)
                     //TODO a better name
             else if val == "text"
-                +text('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}')
+                +text('', root+name+'[key'+level+']', level+1, root + name+".remove(key"+level+")", '{{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
             else if val == "youtube"
-                +youtube('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}')
+                +youtube('', root+name+'[key'+level+']', level+1, 'root + name+".remove(key"+level+")", {{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
             else if val == "img"
-                +img('', root+name+'[key'+level+']', level+1, 'IMG')
+                +img('', root+name+'[key'+level+']', level+1, 'IMG', root + name+".remove(key"+level+")", root + name+".move","key"+level)
             else if val == "textRow"
-                +textRow('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}')
+                +textRow('', root+name+'[key'+level+']', level+1, root + name+".remove(key"+level+")", '{{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
         //TODO move
         if remove != ''
             button(ng-click=remove).btn.remove-button Remove this section
