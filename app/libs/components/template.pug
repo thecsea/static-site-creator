@@ -133,13 +133,13 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
                     +object('Section', val,root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel, root + name+".move","key"+level)
                     //TODO a better name
             else if val == "text"
-                +text('', root+name+'[key'+level+']', level+1, root + name+".remove(key"+level+")", '{{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
+                +text('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
             else if val == "youtube"
-                +youtube('', root+name+'[key'+level+']', level+1, 'root + name+".remove(key"+level+")", {{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
+                +youtube('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
             else if val == "img"
-                +img('', root+name+'[key'+level+']', level+1, 'IMG', root + name+".remove(key"+level+")", root + name+".move","key"+level)
+                +img('', root+name+'[key'+level+']', level+1, 'img', root + name+".remove(key"+level+")", root + name+".move","key"+level)
             else if val == "textRow"
-                +textRow('', root+name+'[key'+level+']', level+1, root + name+".remove(key"+level+")", '{{' + root + name + '[key' + level + '] | title }}', root + name+".move","key"+level)
+                +textRow('', root+name+'[key'+level+']', level+1, '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
         //TODO move
         if remove != ''
             button(ng-click=remove).btn.remove-button Remove this section
