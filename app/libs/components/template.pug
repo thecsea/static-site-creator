@@ -3,15 +3,15 @@ mixin textRow(name, root, unique, title)
     .app-textrow&attributes(attributes)
         label(for=unique)
             i.material-icons title
-            | #{name}
-        input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+name+' here')
+            | #{name || title}
+        input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
 mixin text(name, root, unique, title)
     .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
             | #{name || title}
-        textarea(name=name ng-model=root+name id=unique placeholder="Insert the "+name+' here')
+        textarea(name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
 mixin youtube(name, root, unique, title)
     .app-youtube&attributes(attributes)
@@ -103,7 +103,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
                         h4 #{nameShown}
                 button(ng-click=root + name + ".push(" + addValue + ")").btn Add section
             //button(ng-click=root + name+".push("+addValue+")") Add element
-        div("ng-repeat"='(key'+level+',value'+level+') in '+root + name+' track by $index')
+        div("ng-repeat"='(key'+level+',value'+level+') in '+root + name+' track by '+(typeof (val) == 'string'?'$index':'$id(value'+level+')'))
             if val instanceof Array
                 if(val.title == "textRow" )
                     +array('', '{{' + root + name + '[key' + level + '].title | title}}', val, root+name+'[key'+level+'].', level+1, root + name+".remove(key"+level+")",unique+'-{{key'+level+'}}-', panelLevel, root + name+".move","key"+level)
