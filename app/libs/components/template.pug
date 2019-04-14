@@ -94,7 +94,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
         - addValue = "{"+addValue+"}"
     else if typeof (val) == 'string'
         if val == "img"
-            - addValue = '{filetype:\'\',filename:\'\',filesize:\'\',base64:\'\'}'
+            - addValue = '{}'
         else
             - addValue = '\'\''
 
@@ -144,7 +144,7 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
             else if val == "textRow"
                 +textRow('', root+name+'[key'+level+']', unique+'-{{key'+level+'}}-', '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
         //TODO move
-        button(ng-click=root + name + ".push(" + addValue + ")").btn Add section
+        button(ng-click=root + name + ".push(" + addValue + ")").btn.btn-default Add section
         if remove != ''
             button(ng-click=remove).btn.remove-button Remove this section
 
