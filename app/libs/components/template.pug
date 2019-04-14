@@ -17,7 +17,7 @@ mixin textRow(name, root, unique, title, remove, movePath, moveIndex)
             +removeMoveBasic(remove, movePath, moveIndex)
         input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
-mixin text(name, root, unique, title)
+mixin text(name, root, unique, title, remove, movePath, moveIndex)
     .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
@@ -25,7 +25,7 @@ mixin text(name, root, unique, title)
             +removeMoveBasic(remove, movePath, moveIndex)
         textarea(name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
-mixin youtube(name, root, unique, title)
+mixin youtube(name, root, unique, title, remove, movePath, moveIndex)
     .app-youtube&attributes(attributes)
         label(for=unique)
             i.material-icons movie
@@ -33,7 +33,7 @@ mixin youtube(name, root, unique, title)
             +removeMoveBasic(remove, movePath, moveIndex)
         input(type="url" name=name ng-model=root+name id=unique placeholder="Insert a youtube link")
 
-mixin img(name, root, unique, title)
+mixin img(name, root, unique, title, remove, movePath, moveIndex)
     .app-img&attributes(attributes)
         label
             i.material-icons image
