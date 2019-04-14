@@ -48,6 +48,8 @@ mixin img(name, root, unique, title, remove, movePath, moveIndex)
                 input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input style='display: none;')
         //input(type="file" accept="image/*" ng-model=root+name required base-sixty-four-input)
         //TODO validations
+        //TODO reload img if name changes
+        //TODO drag and drop img
 
 mixin or(name, root, unique, or)
     - or = or.split('|')
