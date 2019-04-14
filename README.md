@@ -86,6 +86,7 @@ NAME -> (LETTER) (DIGIT|LETTER)\*
 - [ ] Password confirmation
 - [ ] XSS and CSRF protections
 - [ ] Validate data with JSON schema
+- [ ] drag and drop such as http://marceljuenemann.github.io/angular-drag-and-drop-lists/demo/#/simple
 
 ## Configuration
 - **Platform:** node
