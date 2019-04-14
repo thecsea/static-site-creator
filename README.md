@@ -66,7 +66,7 @@ ELEMENT -> OBJ | ARRAY | BASICELE
 OBJA -> "{"OBJELEA | (OBJELE ("," OBJELE)\*)"}"  
 OBJELEA -> NAME :" ORELEMENT  
 ARRAY -> "[" OBJA|ARRAY|BASICELE "]"
-BASICELE -> "text" | "textRow" | "img" | "youtube"  
+BASICELE -> "text" | "textRow" | "img" | "youtube"  | "number"
 ORELEMENT -> BASICELE ("|" BASICELE)*  
 NAME -> (LETTER) (DIGIT|LETTER)\*  
 

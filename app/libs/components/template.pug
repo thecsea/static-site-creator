@@ -32,6 +32,13 @@ mixin youtube(name, root, unique, title, remove, movePath, moveIndex)
             span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
         input(type="url" name=name ng-model=root+name id=unique placeholder="Insert a youtube link")
+mixin number(name, root, unique, title, remove, movePath, moveIndex)
+    .app-textrow&attributes(attributes)
+        label(for=unique)
+            i.material-icons format_list_numbered
+            span #{name || title}
+            +removeMoveBasic(remove, movePath, moveIndex)
+        input(type="number" name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
 mixin img(name, root, unique, title, remove, movePath, moveIndex)
     .app-img&attributes(attributes)
@@ -63,6 +70,8 @@ mixin or(name, root, unique, or)
             +img('img', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'img\''})
         else if val == "textRow"
             +textRow('textRow', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'textRow\''})
+        else if val == "number"
+            +number('textRow', root, unique)&attributes({'ng-show':'Utils.keys('+rootS+')[0] == \'number\''})
 
 mixin addOr(or, root)
     - or = or.split('|')
@@ -74,6 +83,8 @@ mixin addOr(or, root)
                 i.material-icons(ng-click=root + name+".push({"+orEle+":''})") image
             when 'youtube'
                 i.material-icons(ng-click=root + name+".push({"+orEle+":''})") movie
+            when 'number'
+                i.material-icons(ng-click=root + name+".push({"+orEle+":''})") format_list_numbered
 
 mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, movePath, moveIndex)
     - tag = hTag(level)
@@ -145,6 +156,8 @@ mixin array(name, nameShown, value, root, level, remove, unique, panelLevel, mov
                 +img('', root+name+'[key'+level+']', unique+'-{{key'+level+'}}-', 'img', root + name+".remove(key"+level+")", root + name+".move","key"+level)
             else if val == "textRow"
                 +textRow('', root+name+'[key'+level+']', unique+'-{{key'+level+'}}-', '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
+            else if val == "number"
+                +number('', root+name+'[key'+level+']', unique+'-{{key'+level+'}}-', '{{' + root + name + '[key' + level + '] | title }}', root + name+".remove(key"+level+")", root + name+".move","key"+level)
         //TODO move
         button(ng-click=root + name + ".push(" + addValue + ")").btn Add section
         if remove != ''
@@ -182,6 +195,8 @@ mixin object(name, obj, root, level, remove, unique, panelLevel, movePath, moveI
                         +img(index, root, unique+index)
                     else if val == "textRow"
                         +textRow(index, root, unique + index)
+                    else if val == "number"
+                        +number(index, root, unique + index)
 
 
 - function hTag(level){
