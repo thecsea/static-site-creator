@@ -13,7 +13,7 @@ mixin textRow(name, root, unique, title, remove, movePath, moveIndex)
     .app-textrow&attributes(attributes)
         label(for=unique)
             i.material-icons title
-            | #{name || title}
+            span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
         input(type="text" name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
@@ -21,7 +21,7 @@ mixin text(name, root, unique, title, remove, movePath, moveIndex)
     .app-textarea&attributes(attributes)
         label(for=unique)
             i.material-icons title
-            | #{name || title}
+            span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
         textarea(name=name ng-model=root+name id=unique placeholder='Insert the '+(name || title)+' here')
 
@@ -29,7 +29,7 @@ mixin youtube(name, root, unique, title, remove, movePath, moveIndex)
     .app-youtube&attributes(attributes)
         label(for=unique)
             i.material-icons movie
-            | #{name || title}
+            span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
         input(type="url" name=name ng-model=root+name id=unique placeholder="Insert a youtube link")
 
@@ -37,7 +37,7 @@ mixin img(name, root, unique, title, remove, movePath, moveIndex)
     .app-img&attributes(attributes)
         label
             i.material-icons image
-            | #{name || title}
+            span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
 
         //TODO img error
