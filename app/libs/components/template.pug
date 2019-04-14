@@ -35,7 +35,7 @@ mixin youtube(name, root, unique, title, remove, movePath, moveIndex)
 
 mixin img(name, root, unique, title, remove, movePath, moveIndex)
     .app-img&attributes(attributes)
-        label
+        label(for=unique)
             i.material-icons image
             span #{name || title}
             +removeMoveBasic(remove, movePath, moveIndex)
