@@ -3,10 +3,12 @@
   "version": "1.0.2",
   "description": "Creator of static sites content for template managers (like pug ex-blade)",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "build": "gulp build",
     "build:production": "gulp build --production",
     "postinstall": "npm run build:production",
-    "start": "node heroku.js && node server.js",
+    "start": "node server.js",
+    "start-heroku": "node heroku.js && node server.js",
     "start:production": "pm2 start server.js -i 4",
     "test": "npm run test:server && npm run test:client",
     "test:client": "karma start app/karma.conf.js --single-run",
@@ -39,7 +41,7 @@
     "gulp-if": "^2.0.0",
     "gulp-ng-annotate": "^2.0.0",
     "gulp-plumber": "^1.1.0",
-    "gulp-sass": "^2.2.0",
+    "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.3",
     "jsonwebtoken": "^5.7.0",
@@ -47,7 +49,7 @@
     "md5": "^2.1.0",
     "moment": "^2.12.0",
     "morgan": "^1.7.0",
-    "nodegit": "^0.14.1",
+    "nodegit": "^0.27.0",
     "nodemailer": "^2.3.0",
     "pg": "^6.0.1",
     "pm2": "^1.0.2",
@@ -55,7 +57,8 @@
     "request": "^2.74.0",
     "request-promise": "^4.0.2",
     "sanitize-filename": "^1.6.0",
-    "sqlite3": "^3.1.1",
+    "sass": "^1.56.1",
+    "sqlite3": "^5.0.0",
     "ssh-keygen": "^0.2.1",
     "tmp": "0.0.28",
     "vinyl-buffer": "^1.0.0",
@@ -77,5 +80,8 @@
   },
   "engines": {
     "node": "6.1.0"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.10"
   }
 }
